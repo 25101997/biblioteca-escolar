@@ -90,7 +90,6 @@ html, body {
 
 .table__container{
   margin: 20px;
-  width: 750px;
   border: 1px solid #530084;
   box-shadow: 0 0 8px 4px rgba(83, 0, 132, 0.3);
   border-radius: 0.8rem;
@@ -199,21 +198,7 @@ input:checked + .icon {
   text-align: center;
 }
 
-.form_container{
-  box-sizing: border-box;
-  padding: 1.5rem;
-  max-width: 450px;
-  border-radius: 0.8rem;
-  border: 1px solid #530084;
-  box-shadow: 0 0 8px 4px rgba(83, 0, 132, 0.3);
-}
 
-.form_section{
-  box-sizing: border-box;
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-}
 
 /*  End Form Components  */
 

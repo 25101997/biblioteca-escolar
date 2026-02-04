@@ -13,15 +13,16 @@ builder.Services.AddAutoMapper(typeof(Program));
 // Configuración de CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAngularApp",
+    options.AddPolicy("AllowAll",
         policy =>
         {
-            policy.WithOrigins("http://localhost:4200") // origen de tu app Angular
-                  .AllowAnyHeader()
-                  .AllowAnyMethod()
-                  .AllowCredentials(); // opcional, si usas cookies/autenticación
+            policy
+                .AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
         });
 });
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -65,7 +66,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // DEBE IR ANTES DE MapControllers()
-app.UseCors("AllowAngularApp");
+//app.UseCors("AllowAngularApp");
+app.UseCors("AllowAll");
 
 app.MapControllers();
 

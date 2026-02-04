@@ -1,6 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { FormControl, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { AnimalService } from '../../../services/animal/animal.service';
+import { LitterService } from '../../../services/litter/litter.service';
+import { Animal } from '../../../models/animal.model';
+import { AnimalWrite } from '../../../models/animal.model';
+import { AnimalUpdate } from '../../../models/animal.model';
+import { AnimalOrigin } from '../../../models/animal.model';
+import { AnimalStatus } from '../../../models/animal.model';
+import { AnimalStage } from '../../../models/animal.model';
+import { LitterRead } from '../../../models/litter.model';
 
 @Component({
   selector: 'app-animal-form',
@@ -9,7 +18,7 @@ import { FormControl, Validators } from '@angular/forms';
 })
 
 export class AnimalFormComponent implements OnInit {
-  go_back = '/livestock/animal-list'
+  go_back = '/livestock/animal-list';
   isEditMode = false;
   animalId?: number;
   peso: number | null = null;
@@ -24,19 +33,265 @@ export class AnimalFormComponent implements OnInit {
     }
   );
 
-  codigos = [
-    '2025000001','2025000002','2025000003',
-    '2025000004','2025000005','2025000006'
-  ];
+  litters: LitterRead[] = [];
+  animals: Animal[] = [];
+  animalStatuses: AnimalStatus[] = [];
+  animalOrigins: AnimalOrigin[] = [];
+  animalStages: AnimalStage[] = [];
+  animalForm!: FormGroup;
+  origen = '';
 
-  codigoSeleccionado = '';
+  // Variables temporales para guardar eventos del formulario
+  estado = '';
+
+  // Otras variables
+  max_weight = 1900;
+  min_weight = 1;
+
+  constructor(
+    private animalService: AnimalService,
+    private litterService: LitterService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private formBuilder: FormBuilder,
+  ) {}
+  
+  ngOnInit(): void {
+    this.initForm();
+    this.readIdFromUrl();
+    // Aquí enlazas pesoControl al control del formulario
+    this.pesoControl = this.animalForm.get('weight') as FormControl;
+    
+    // Animales
+    this.animalService.getAll().subscribe({
+      next: (data) => {
+        this.animals = data;
+      },
+      error: (err) => console.error('Error al cargar estados:', err)
+    });
+
+    // Estados
+    this.animalService.getAllStatuses().subscribe({
+      next: (data) => {
+        this.animalStatuses = data;
+      },
+      error: (err) => console.error('Error al cargar estados:', err)
+    });
+
+    // Origenes
+    this.animalService.getAllOrigins().subscribe({
+      next: (data) => {
+        this.animalOrigins = data;
+      },
+      error: (err) => console.error('Error al cargar origines:', err)
+    });
+
+    // Estapas
+    this.animalService.getAllStages().subscribe({
+      next: (data) => {
+        this.animalStages = data;
+      },
+      error: (err) => console.error('Error al cargar estapas:', err)
+    });
+
+    // Camadas
+    this.litterService.getAll().subscribe({
+      next: (data) => {
+        this.litters = data;
+      },
+      error: (err) => console.error('Error al cargar estapas:', err)
+    });
+   
+    console.log(this.animalForm.value.breed);
+  }
+
+  private initForm(): void {
+    this.animalForm = this.formBuilder.group({
+      id: [null],
+      originId: [0, Validators.required],
+      litterId: [null],
+      statusId: [0, Validators.required],
+      stageId: [0, Validators.required],
+      weight: [1, [Validators.required, Validators.min(this.min_weight),
+                  Validators.max(this.max_weight),
+                  Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+      sex: ['', Validators.required],
+      breed: [null],
+      birthDate: ['', Validators.required]
+    });
+  }
+
+  private readIdFromUrl(): void {
+    const idURL = this.route.snapshot.paramMap.get('id');
+    if (idURL) {
+      this.animalId = Number(idURL);
+      this.isEditMode = true;
+      this.loadAnimal();
+    }
+  }
+
+/** Cargar datos si estamos editando */
+ private loadAnimal(): void {
+  if (!this.animalId) return;
+
+  this.animalService.getById(this.animalId).subscribe({
+    next: (data) => {
+
+      // Ajustar fecha para el input type="date" (solo yyyy-MM-dd)
+      const birth = data.birthDate
+        ? data.birthDate.toString().substring(0, 10)
+        : '';
+
+      this.animalForm.patchValue({
+        id: data.id,
+        originId: data.origin?.id ?? 0,
+        //litterId: data.litterId,
+        statusId: data.status?.id ?? 0,
+        stageId: data.stage?.id ?? 0,
+        weight: data.weight,
+        sex: data.sex,        // 'macho' | 'hembra'
+        breed: data.breed,
+        birthDate: birth
+      });
+
+      // Para que las secciones *ngIf dependan del origen
+      this.origen = String(data.origin?.id ?? '');
+
+      console.log('origen:', this.origen);
+
+      console.log('Form cargado para edición:', this.animalForm.value);
+    },
+    error: () => {
+      console.error('No se pudo cargar el animal.');
+    }
+  });
+}
 
 
-  origen = 'born'; // valor inicial
+  /** Guardar un nuevo animal */
+  saveAnimal(): void {
+
+    if (this.isEditMode && this.animalId) {
+
+      const formData: AnimalUpdate = {
+                                      id: Number(this.animalForm.value.id),
+                                      originId: Number(this.animalForm.value.originId),
+                                      statusId: Number(this.animalForm.value.statusId),
+                                      stageId: Number(this.animalForm.value.stageId),
+                                      weight: Number(this.animalForm.value.weight),
+                                      sex: this.animalForm.value.sex,
+                                      breed: this.animalForm.value.breed,
+                                      birthDate: this.animalForm.value.birthDate
+                                    };
+
+                                    
+      console.log('Update animal: ', formData)
+
+      this.animalService.update(this.animalId, formData).subscribe(() => {
+        this.goBack();
+      });
+
+    } else {
+
+      const formData: AnimalWrite = {
+                                      originId: Number(this.animalForm.value.originId),
+                                      statusId: Number(1),
+                                      stageId: Number(this.animalForm.value.stageId),
+                                      weight: Number(this.animalForm.value.weight),
+                                      sex: this.animalForm.value.sex,
+                                      breed: this.animalForm.value.breed,
+                                      birthDate: this.animalForm.value.birthDate
+                                    };
+
+      if(formData.originId == 2){ 
+        formData.stageId = 1
+      }
+
+      /*  this.litterService.getById(Number(formData.stageId)).subscribe({
+          next: (data) => {
+
+            // Ajustar fecha para el input type="date" (solo yyyy-MM-dd)
+            const birth = data.birthDate
+              ? data.birthDate.toString().substring(0, 10)
+              : '';
+
+            this.animalForm.patchValue({
+              id: data.id,
+              originId: data.origin?.id ?? 0,
+              statusId: data.status?.id ?? 0,
+              stageId: data.stage?.id ?? 0,
+              weight: data.weight,
+              sex: data.sex,        // 'macho' | 'hembra'
+              breed: data.breed,
+              birthDate: birth
+            });
+
+            // Para que las secciones *ngIf dependan del origen
+            this.origen = String(data.origin?.id ?? '');
+
+            console.log('origen:', this.origen);
+
+            console.log('Form cargado para edición:', this.animalForm.value);
+          },
+          error: () => {
+            console.error('No se pudo cargar el animal.');
+          }
+        });
+
+      }
+
+      console.log('Create new animal: ', formData)
+      // Buscar que es estado gestacion exista
+      this.animalService.create(formData).subscribe(() => {
+        this.goBack();
+      });*/
+    }
+
+  }
+
+  /** Función que se ejecuta cuando se presiona el botón Guardar */
+  onSubmit(): void {
+    if (this.animalForm.invalid) {
+
+      console.log('Formulario inválido');
+      // Recorremos todos los controles 
+      Object.keys(this.animalForm.controls).forEach(key => { 
+        const control = this.animalForm.get(key);
+
+        if (control && control.invalid) { 
+          console.log(`❌ Control "${key}" inválido:`, control.errors); 
+        }  
+
+      });
+
+      this.animalForm.markAllAsTouched(); 
+      return; 
+    }
+
+    this.saveAnimal();
+  }
+
+  /** Reset del formulario */
+  resetForm(): void {
+    this.animalForm.reset();
+  }
+
+  /** Cancelar y volver atrás */
+  cancel(): void {
+    this.goBack();
+  }
+
+  /** Navega hacia atrás */
+  goBack(): void {
+    this.router.navigate(['/livestock/animal-list']);
+  }
 
   onOrigenChange(event: Event) {
-    const select = event.target as HTMLSelectElement;
-    this.origen = select.value;
+
+    const selectElement = event.target as HTMLSelectElement; 
+    this.origen = selectElement.value;
+    const selectedText = selectElement.options[selectElement.selectedIndex].text; 
+
   }
 
   allowOnlyNumbers(event: KeyboardEvent) {
@@ -107,20 +362,10 @@ export class AnimalFormComponent implements OnInit {
     }
   }
 
-
   validatePaste(event: ClipboardEvent) {
     const pasted = event.clipboardData?.getData('text') ?? '';
     if (!/^\d+$/.test(pasted)) {
       event.preventDefault(); // bloquea si lo pegado no son solo números
-    }
-  }
-
-  ngOnInit() {
-    this.animalId = Number(this.route.snapshot.paramMap.get('id'));
-    this.isEditMode = !!this.animalId;
-
-    if (this.isEditMode) {
-      // cargar datos del animal para editar
     }
   }
 
@@ -132,6 +377,10 @@ export class AnimalFormComponent implements OnInit {
     }
   }
 
-  constructor(private route: ActivatedRoute) {}
+  get littersFinalizados() { 
+    return this.litters.filter(l => l.status === 'finalizado'); 
+  }
+
 }
+
 

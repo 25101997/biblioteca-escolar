@@ -1,94 +1,155 @@
-<form action="" class="form_container" method="post">
-            <h2 class="form_title">Nuevo Registro Reproductivo</h2>
+<form
+  [formGroup]="litterForm"
+  (ngSubmit)="onSubmit()"
+  class="form_container">
 
-            <div class="form_section" id="born">
+  <h2 class="form_title">Nuevo Registro Reproductivo</h2>
 
-                <input
-                    id="codigo"
-                    name="codigo"
-                    type="text"
-                    inputmode="numeric"
-                    maxlength="10"
-                    placeholder="Madre"
-                    list="codigos"
-                    [(ngModel)]="codigoSeleccionado"
-                    (keypress)="allowOnlyNumbers($event)"
-                    (paste)="validatePaste($event)"
-                    class="form-control mt-1"
-                    style="max-width: 100px;"
-                />
+  <div class="form_section">
 
-                <datalist id="codigos">
-                    <option *ngFor="let c of codigos" [value]="c"></option>
-                </datalist>
+    <!-- MADRE -->
+    <div class="floating-group"> 
+        <select id="madreId" formControlName="madreId" required> 
+            <ng-container *ngFor="let madre of hembras">
+                <option *ngIf="madre.sex === 'hembra'" [value]="madre.id"> 
+                    {{ madre.id.toString().padStart(5, '0') }}
+                </option> 
+            </ng-container> 
+        </select> 
+        <label for="madreSelect">Madre</label> 
+    </div>
+    
+    <!-- PADRE -->
+    <div class="floating-group">
+      <select id="padreId" formControlName="padreId">
+        <ng-container *ngFor="let padre of machos">
+          <option *ngIf="padre.sex === 'macho'" [value]="padre.id">
+            {{ '00000' }}{{ padre.id }}
+          </option>
+        </ng-container>
+      </select>
+      <label for="padreId">Padre</label>
+    </div>
 
-                <input
-                    id="codigo"
-                    name="codigo"
-                    type="text"
-                    inputmode="numeric"
-                    maxlength="10"
-                    placeholder="Padre"
-                    list="codigos"
-                    [(ngModel)]="codigoSeleccionado"
-                    (keypress)="allowOnlyNumbers($event)"
-                    (paste)="validatePaste($event)"
-                    class="form-control mt-1"
-                    style="max-width: 100px;"
-                />
+    <div *ngIf="isEditMode == true">
+      <!-- ESTADO -->
+      <div class="floating-group">
+        <select id="estado" formControlName="status" required>
+          <option value="" disabled selected hidden>Seleccione estado</option>
+          <ng-container *ngFor="let status of statuses">
+            <option [value]="status">
+              {{ status }}
+            </option>
+          </ng-container>
+        </select>
+        <label for="estado">Estado</label>
+      </div>
+    </div>
 
-                <datalist id="codigos">
-                    <option *ngFor="let c of codigos" [value]="c"></option>
-                </datalist>
+    <!-- HEMBRAS NACIDAS -->
+    <div  class="floating-group" 
+          *ngIf="(litterForm.value.status == 'finalizado')">
+      <input
+        id="bornAliveFemales"
+        type="number"
+        formControlName="bornAliveFemales"
+        min="{{min_born}}"
+        max="{{max_born}}"
+        (keypress)="OnlyDigit($event)"
+        (input)="onInput($event)"
+        (input)="sumatoria($event)"
+      />
+      <label for="bornAliveFemales">Hembras nacidas</label>
+      <div *ngIf="litterForm.get('bornAliveFemales')?.hasError('min')"> El valor mínimo permitido es {{min_born}}
+      </div> <div *ngIf="litterForm.get('bornAliveFemales')?.hasError('max')"> El valor máximo permitido es {{max_born}} </div> 
+      <div *ngIf="litterForm.get('bornAliveFemales')?.hasError('required')"> Este campo es obligatorio </div>
+      <div>Suma total de {{min_born}}-{{max_born}}</div>
+    </div>
 
-                <input 
-                    type="date" 
-                    placeholder="Fecha de Inicio" 
-                    class="form-control mt-1"
-                >
+    <!-- MACHOS NACIDOS -->
+    <div  class="floating-group"
+          *ngIf="(litterForm.value.status == 'finalizado')">
+      <input
+        id="bornAliveMales"
+        type="number"
+        formControlName="bornAliveMales"
+        min="{{min_born}}"
+        max="{{max_born}}"
+        (keypress)="OnlyDigit($event)"
+        (input)="onInput($event)"
+        (input)="sumatoria($event)"
+      />
+      <label for="bornAliveMales">Machos nacidos</label>
+      <div *ngIf="litterForm.get('bornAliveMales')?.hasError('min')"> El valor mínimo permitido es {{min_born}}
+      </div> <div *ngIf="litterForm.get('bornAliveMales')?.hasError('max')"> El valor máximo permitido es {{max_born}} </div> 
+      <div *ngIf="litterForm.get('bornAliveMales')?.hasError('required')"> Este campo es obligatorio </div>
+      <div>Suma total de {{min_born}}-{{max_born}}</div>
+    </div>
 
-                <input 
-                    type="date" 
-                    placeholder="Fecha de Fin" 
-                    class="form-control mt-1"
-                >
+    <!-- MACHOS ABORTADOS -->
+    <div  class="floating-group"
+          *ngIf="(litterForm.value.status == 'finalizado' || 
+          litterForm.value.status == 'abortado')">
+      <input
+        id="stillbornMales"
+        type="number"
+        formControlName="stillbornMales"
+        min="{{min_born}}"
+        max="{{max_born}}"
+        (keypress)="OnlyDigit($event)"
+        (input)="onInput($event)"
+        (input)="sumatoria($event)"
+      />
+      <label for="stillbornMales">Machos abortados</label>
+      <div *ngIf="litterForm.get('stillbornMales')?.hasError('min')"> El valor mínimo permitido es {{min_born}}
+      </div> <div *ngIf="litterForm.get('stillbornMales')?.hasError('max')"> El valor máximo permitido es {{max_born}} </div> 
+      <div *ngIf="litterForm.get('stillbornMales')?.hasError('required')"> Este campo es obligatorio </div>
+      <div>Suma total de {{min_born}}-{{max_born}}</div>
+    </div>
 
-                <input 
-                    type="number" 
-                    placeholder="Machos Nacidos" 
-                    class="form-control mt-1"
-                >
+    <!-- HEMBRAS ABORTADAS -->
+    <div  class="floating-group"
+          *ngIf="(litterForm.value.status == 'finalizado' || 
+          litterForm.value.status == 'abortado')">
+      <input
+        id="stillbornFemales"
+        type="number"
+        formControlName="stillbornFemales"
+        min="{{min_born}}"
+        max="{{max_born}}"
+        (keypress)="OnlyDigit($event)"
+        (input)="onInput($event)"
+        (input)="sumatoria($event)"
+      />
+      <label for="stillbornFemales">Hembras abortadas</label>
+      <div *ngIf="litterForm.get('stillbornFemales')?.hasError('min')"> El valor mínimo permitido es {{min_born}}
+      </div> <div *ngIf="litterForm.get('stillbornFemales')?.hasError('max')"> El valor máximo permitido es {{max_born}} </div> 
+      <div *ngIf="litterForm.get('stillbornFemales')?.hasError('required')"> Este campo es obligatorio </div>
+      <div>Suma total de {{min_born}}-{{max_born}}</div>
+    </div>
 
-                <input 
-                    type="number" 
-                    placeholder="Hembras Nacidas" 
-                    class="form-control mt-1"
-                >
+    <!-- NOTAS -->
+    <div class="floating-group">
+      <textarea
+        id="notas"
+        rows="3"
+        formControlName="notes"
+        placeholder=" "
+      ></textarea>
+      <label for="notas">Notas</label>
+    </div>
+  </div> <!-- Fin class="form_section" -->
+     
+  <button
+        type="submit"
+        class="sqr_rds mt-1"
+        style="display: flex; margin: 0; padding: 0; background-color: transparent; border: 0px transparent;">
+      <img
+        src="/assets/icons/save_disk.png"
+        alt=""
+        class="sqr_rds"
+        style="width: 5rem; height: 5rem;" />
+  </button>
 
-                <input 
-                    type="number" 
-                    placeholder="Machos Abortados" 
-                    class="form-control mt-1"
-                >
-
-                <input 
-                    type="number" 
-                    placeholder="Hembras Abortadas"
-                    class="form-control mt-1"
-                >
-
-                <select class="form-control mt-1" placeholder="Estado">
-                    <option value="1">fecundado</option>
-                    <option value="2">no fecundado</option>
-                    <option value="3">finalizado</option>
-                    <option value="3">abortado</option>
-                </select>
-
-                <textarea name="" id="" class="form-control mt-1" placeholder="Notas"></textarea>
-
-            </div>
-
-            <button type="submit" class="sqr_rds mt-1" style="display: flex; margin: 0; padding: 0; background-color: transparent; border: 0px transparent;" ><img src="/assets/icons/save_disk.png" alt="" class="sqr_rds" style="width: 5rem; height: 5rem;"></button>
-        
 </form>
 

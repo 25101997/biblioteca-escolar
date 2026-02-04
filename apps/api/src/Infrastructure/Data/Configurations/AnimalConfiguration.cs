@@ -16,6 +16,7 @@ namespace Infrastructure.Data.Configurations
             builder.Property(a => a.OriginId).HasColumnName("origin_id").IsRequired();
             builder.Property(a => a.StatusId).HasColumnName("status_id").IsRequired();
             builder.Property(a => a.StageId).HasColumnName("stage_id").IsRequired();
+            builder.Property(a => a.LitterId).HasColumnName("litter_id");
 
             builder.Property(a => a.Sex)
                 .HasColumnName("sex")
@@ -26,6 +27,10 @@ namespace Infrastructure.Data.Configurations
                 .HasColumnName("breed")
                 .HasMaxLength(100)
                 .IsRequired();
+
+            builder.Property(a => a.Weight)
+                .HasColumnName("weight")
+                .HasPrecision(6, 2);
 
             builder.Property(a => a.BirthDate)
                 .HasColumnName("birth_date")
@@ -60,6 +65,12 @@ namespace Infrastructure.Data.Configurations
                 .HasConstraintName("fk_stage")
                 .OnDelete(DeleteBehavior.Restrict);
                 //.WithMany(st => st.Animals)
+            
+            builder.HasOne(a => a.Litter)
+                .WithMany()
+                .HasForeignKey(a => a.LitterId)
+                .HasConstraintName("fk_litter")
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

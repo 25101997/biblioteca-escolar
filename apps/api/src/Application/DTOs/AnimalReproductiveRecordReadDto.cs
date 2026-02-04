@@ -10,7 +10,6 @@ namespace Application.DTOs
         public int BornFemale { get; set; }
         public int AbortedMale { get; set; }
         public int AbortedFemale { get; set; }
-        public int TotalBorn { get; set; }
         public string? Notes { get; set; }
         public DateTimeOffset Updated { get; set; }
         public DateTimeOffset Created { get; set; }

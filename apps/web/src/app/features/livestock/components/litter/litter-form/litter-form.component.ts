@@ -1,135 +1,256 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { FormControl, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { AnimalService } from '../../../services/animal/animal.service';
+import { LitterService } from '../../../services/litter/litter.service';
+import { Animal } from '../../../models/animal.model';
+import { AnimalUpdate } from '../../../models/animal.model';
+import { AnimalStage } from '../../../models/animal.model';
+import { LitterRead, LitterWrite, LitterUpdate } from '../../../models/litter.model';
 
 @Component({
   selector: 'app-litter-form',
   templateUrl: './litter-form.component.html',
   styleUrls: ['./litter-form.component.scss']
 })
+
 export class LitterFormComponent {
-  go_back = '/livestock/animal-list'
+  litterForm!: FormGroup;
   isEditMode = false;
-  animalId?: number;
-  peso: number | null = null;
-  pesoControl = new FormControl<number | null>(
-    null,
-    {
-      validators: [
-        Validators.min(1),
-        Validators.max(1900),
-        Validators.pattern(/^\d+(\.\d{1,2})?$/) // permite 0-2 decimales
-      ]
+  litterId: number | null = null;
+  animalStages: AnimalStage[] = [];
+  motherSelect? : Animal;
+  animals: Animal[] = [];
+  hembras: Animal[] = []; 
+  machos: Animal[] = [];
+  statuses: string[] = ['registrado','fecundado','no fecundado','abortado', 'finalizado'];
+  
+  // Variables temporales selecionadas
+  estadoSelecionado = '';
+  max_born = 30;
+  min_born = 0;
+  previous_digit = 0;
+  
+  constructor(
+    private route: ActivatedRoute,
+    private animalService: AnimalService,
+    private fb: FormBuilder,
+    private router: Router,
+    private litterService: LitterService
+  ) {}
+
+
+  ngOnInit(): void {
+    this.initForm();
+    this.readIdFromUrl();
+
+    if(!this.isEditMode){
+      this.animalService.getAll().subscribe({
+        next: (datas) => {
+          
+
+          for (const data of datas) {
+          
+            const edad = Math.floor((new Date().getTime() - new Date(data.birthDate).getTime()) / (1000 * 60 * 60 * 24));        
+          
+              const enEtapa = data.stage?.name.toLowerCase() === 'reproduccion'
+              
+              if (edad >= 80 && enEtapa){
+                const sexo = data.sex.toLowerCase()
+                if ( sexo === 'hembra'){
+                  this.hembras.push(data);
+                } else if ( sexo === 'macho'){
+                  this.machos.push(data);
+                }
+              }  
+            
+          }
+        },
+        error: (err) => console.error('Error al cargar padres:', err)
+      });
     }
-  );
 
-  codigos = [
-    '2025000001','2025000002','2025000003',
-    '2025000004','2025000005','2025000006'
-  ];
-
-  codigoSeleccionado = '';
-
-
-  origen = 'born'; // valor inicial
-
-  onOrigenChange(event: Event) {
-    const select = event.target as HTMLSelectElement;
-    this.origen = select.value;
   }
 
-  allowOnlyNumbers(event: KeyboardEvent) {
-    const char = event.key;
-    if (!/^\d$/.test(char)) {
-      event.preventDefault(); // bloquea todo lo que no sea dígito
+  /** Inicializa el formulario reactivo */
+  private initForm(): void {
+    this.litterForm = this.fb.group({
+      id: [null],
+      madreId: [null, Validators.required],
+      padreId: [null],
+      bornAliveFemales: [0, [Validators.required, Validators.min(this.min_born), Validators.max(this.max_born)]],
+      bornAliveMales: [0, [Validators.required, Validators.min(this.min_born), Validators.max(this.max_born)]],
+      stillbornMales: [0, [Validators.required, Validators.min(this.min_born), Validators.max(this.max_born)]],
+      stillbornFemales: [0, [Validators.required, Validators.min(this.min_born), Validators.max(this.max_born)]],
+      status: ['registrado',Validators.required],
+      notes: [null]
+    });
+  }
+
+  /** Lee el parámetro ":id" de la URL */
+  private readIdFromUrl(): void {
+    const idURL = this.route.snapshot.paramMap.get('id');
+    if (idURL) {
+      this.litterId = Number(idURL);
+      this.isEditMode = true;
+      this.loadLitter();
     }
   }
 
-  allowOnlyNumbersMaxMinAndTwoDecimals(event: KeyboardEvent, inputValue: string | number, min: number, max: number) {
-    const value = String(inputValue ?? '');
-    const char = event.key;
+  /** Cargar datos si estamos editando */
+  private loadLitter(): void {
+    if (!this.litterId) return;
 
-    // Permitir teclas de control
-    if (['Backspace', 'Tab', 'Enter', 'ArrowLeft', 'ArrowRight', 'Delete'].includes(char)) {
-      return;
-    }
+    this.litterService.getById(this.litterId).subscribe({
+      next: (data) => {
+        this.hembras.push(data.mother as Animal)
+        this.machos.push(data.father as Animal)
 
-    // Solo dígitos y punto
-    if (!/[0-9.]/.test(char)) {
-      event.preventDefault();
-      return;
-    }
-
-    // Evitar más de un punto
-    if (char === '.' && value.includes('.')) {
-      event.preventDefault();
-      return;
-    }
-
-    // Máximo dos decimales
-    if (value.includes('.')) {
-      const [, dec = ''] = value.split('.');
-      if (dec.length >= 2) {
-        event.preventDefault();
-        return;
+        this.litterForm.patchValue({
+          id: data.id,
+          madreId: data.mother?.id,
+          padreId: data.father?.id,
+          bornAliveMales: data.bornMale,
+          bornAliveFemales: data.bornFemale,
+          stillbornMales: data.abortedMale,
+          stillbornFemales: data.abortedFemale,
+          status: data.status,
+          notes: data.notes
+        });
+      },
+      error: () => {
+        console.error('No se pudo cargar la camada.');
       }
+    });
+  }
+
+  /** Guardar una nueva camada o actualizar */
+  saveLitter(): void {
+
+    const formData: LitterUpdate = {
+                    id: Number(this.litterId),
+                    motherId: Number(this.litterForm.value.madreId),
+                    fatherId: Number(this.litterForm.value.padreId),
+                    bornMale: Number(this.litterForm.value.bornAliveMales),
+                    bornFemale: Number(this.litterForm.value.bornAliveFemales),
+                    abortedMale: Number(this.litterForm.value.stillbornMales),
+                    abortedFemale: Number(this.litterForm.value.stillbornFemales),
+                    status: this.litterForm.value.status,
+                    notes: this.litterForm.value.notes,
+                  };
+
+    if (this.isEditMode && this.litterId) {
+      this.litterService.update(this.litterId, formData).subscribe(() => {
+        this.goBack();
+      });
+    } else {
+
+      // Buscar que es estado gestacion exista
+      this.animalService.getAllStages().subscribe({
+        next: (stages) => {
+          
+          for(const stage of stages){
+            if(stage.name.toLocaleLowerCase()=== 'gestacion'){
+              this.animalService.getById(Number(this.litterForm.value.madreId)).subscribe({
+                  next: (madre: Animal) => {
+                    const motherUpdated: AnimalUpdate = {
+                      id: Number(madre.id),
+                      originId: Number(madre.origin?.id),
+                      statusId: Number(madre.status?.id),
+                      stageId: stage.id,
+                      sex: madre.sex,
+                      weight: madre.weight,
+                      breed: madre.breed,
+                      birthDate: madre.birthDate
+                    };
+                    this.litterService.create(formData).subscribe(() => {
+                      this.animalService.update(madre.id, motherUpdated).subscribe(() => {
+                        this.goBack();
+                      });
+                    });
+                  },
+                  error: (err) => {
+                    console.error('Error al obtener madre por id:', err);
+                  }
+              });
+            }
+          }
+        },
+        error: (err) => console.error('Error al cargar etapas del animal:', err)
+      });
     }
+  }
 
-    // --- Chequeo de rango ---
-    // Simulamos cómo quedaría el valor si aceptamos el char
-    const newValue = value + char;
-
-    // Si termina en "." no validamos aún (ej: "12.")
-    if (newValue.endsWith('.')) return;
-
-    const num = Number(newValue);
-
-    // Si no es número válido, bloqueamos
-    if (Number.isNaN(num)) {
-      event.preventDefault();
+  /** Función que se ejecuta cuando se presiona el botón Guardar */
+  onSubmit(): void {
+    if (this.litterForm.invalid) {
+      this.litterForm.markAllAsTouched();
       return;
     }
-
-    // Bloquea si supera el máximo o es menor al mínimo
-    if (num > max || num < min) {
-      event.preventDefault();
-      return;
-    }
+    this.saveLitter();
   }
 
-
-  validatePasteDecimal(event: ClipboardEvent) {
-    const pasted = event.clipboardData?.getData('text') ?? '';
-    // solo formato numérico con máx. 2 decimales (permite “.”)
-    if (!/^\d+(\.\d{1,2})?$/.test(pasted)) {
-      event.preventDefault();
-    }
+  /** Reset del formulario */
+  resetForm(): void {
+    this.litterForm.reset();
   }
 
-
-  validatePaste(event: ClipboardEvent) {
-    const pasted = event.clipboardData?.getData('text') ?? '';
-    if (!/^\d+$/.test(pasted)) {
-      event.preventDefault(); // bloquea si lo pegado no son solo números
-    }
+  /** Cancelar y volver atrás */
+  cancel(): void {
+    this.goBack();
   }
 
-  ngOnInit() {
-    this.animalId = Number(this.route.snapshot.paramMap.get('id'));
-    this.isEditMode = !!this.animalId;
-
-    if (this.isEditMode) {
-      // cargar datos del animal para editar
-    }
+  /** Navega hacia atrás */
+  goBack(): void {
+    this.router.navigate(['/livestock/litter-list']);
   }
 
-  // valida al salir del input
-  checkRange() {
-    if (this.peso !== null) {
-      if (this.peso < 1) this.peso = 1;
-      if (this.peso > 1900) this.peso = 1900;
-    }
+  OnlyDigit(event: KeyboardEvent) { 
+    const input = event.target as HTMLInputElement; 
+    const char = event.key; 
+
+    // Permitir teclas de control 
+    if (['Backspace', 'Tab', 'Enter', 'ArrowLeft', 'ArrowRight', 'Delete'].includes(char)) { return; }
+
+    // Examina que char sea un digito.
+    if (!/[0-9]/.test(char)) { event.preventDefault(); return; }
+
+    this.previous_digit = Number(input.value);
   }
 
-  constructor(private route: ActivatedRoute) {}
+  onInput(event: Event): void {
+    const inputElement = event.target as HTMLInputElement; 
+    const value = Number(inputElement.value);
+    const max = Number(inputElement.getAttribute('max'));
+    const min = Number(inputElement.getAttribute('min'));
+
+    if(value > max || value < min){
+      inputElement.value = String(this.previous_digit);
+    }else{
+      inputElement.value = String(value);
+    }
+    
+  }
+
+  sumatoria(event: Event): void { 
+    const inputElement = event.target as HTMLInputElement; 
+    const value = Number(inputElement.value);
+
+    const controlName = inputElement.getAttribute('formcontrolname');
+    
+    const a = Number(this.litterForm.get('bornAliveFemales')?.value)
+    const b = Number(this.litterForm.get('bornAliveMales')?.value)
+    const c = Number(this.litterForm.get('stillbornFemales')?.value)
+    const d = Number(this.litterForm.get('stillbornMales')?.value)
+
+    const sumatoria = (a + b + c + d);
+    
+    if(sumatoria > this.max_born){
+      this.litterForm.get(String(controlName))?.setValue(this.previous_digit)
+    }else{
+      this.litterForm.get(String(controlName))?.setValue(value)
+    }
+
+  }
+
 }

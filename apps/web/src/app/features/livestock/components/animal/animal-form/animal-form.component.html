@@ -1,112 +1,114 @@
-<form action="" class="form_container" method="post">
-            <h2 class="form_title">Agregar un nuevo animal</h2>
+<form 
+    class="form_container"
+    (ngSubmit)="onSubmit()"
+    [formGroup]="animalForm"
+>
+    <h2 class="form_title">Agregar un nuevo animal</h2>
 
-            <div class="form_section">
-                <div>
-                    <select name="" id="" class="form-control" [value]="origen" (change)="onOrigenChange($event)">
-                        <option value="bought">Comprado a granja externa</option>
-                        <option value="born">Nacido dentro de la granja</option>
-                    </select>
-                </div>
-            </div>
+    <div class="floating-group">
+        <select id="origiId" formControlName="originId" [value]="origen" (change)="onOrigenChange($event)">
+            <ng-container *ngFor="let origin of animalOrigins">
+                <option [value]="origin.id" >
+                    {{ origin.name }}
+                </option>
+            </ng-container>
+        </select>
+        <label for="originId">Origen</label>
+    </div>
 
-            <div *ngIf="origen === 'born'" class="form_section" id="born">
-    
-                <input
-                    id="codigo"
-                    name="codigo"
-                    type="text"
-                    inputmode="numeric"
-                    maxlength="10"
-                    placeholder="Código parto"
-                    list="codigos"
-                    [(ngModel)]="codigoSeleccionado"
-                    (keypress)="allowOnlyNumbers($event)"
-                    (paste)="validatePaste($event)"
-                    class="form-control mt-1"
-                    style="max-width: 100px;"
-                />
+    <div *ngIf="origen === '1' && littersFinalizados.length > 0" class="form_section">
+        <select id="litters">
+            <option *ngFor="let litter of littersFinalizados" [value]="litter.id">
+            {{ litter.id.toString().padStart(5, '0') }} - {{ litter.status }}
+            </option>
+        </select>
+        <label for="litters">Camada</label>
+    </div>
 
-                <datalist id="codigos">
-                    <option *ngFor="let c of codigos" [value]="c"></option>
-                </datalist>
 
-                <input 
-                    type="text" 
-                    placeholder="Padre" 
-                    class="form-control mt-1"
-                    style="max-width: 110px;"
-                >
+    <div *ngIf="origen === '1' && litters.length < 1" class="form_section">
+        <span>No hay partos registrados.</span>
+    </div>
 
-                <input 
-                    type="text" 
-                    placeholder="Madre" 
-                    class="form-control mt-1"
-                    style="max-width: 110px;"
-                >
-            </div>
 
-            <div *ngIf="origen === 'bought'" class="form_section" id="bought">
-    
-                <input
-                    id="codigo"
-                    name="codigo"
-                    type="text"
-                    inputmode="numeric"
-                    maxlength="10"
-                    placeholder="Proveedor"
-                    list="codigos"
-                    [(ngModel)]="codigoSeleccionado"
-                    (keypress)="allowOnlyNumbers($event)"
-                    (paste)="validatePaste($event)"
-                    class="form-control mt-1"
-                    style="max-width: 100px;"
-                />
+    <div *ngIf="origen === '2' || litters.length > 0" class="form_section">
 
-                <datalist id="codigos">
-                    <option *ngFor="let c of codigos" [value]="c"></option>
-                </datalist>
+        <select name="gender" id="" class="form-control mt-1" formControlName="sex" >
+            <option value="macho">Macho</option>
+            <option value="hembra">Hembra</option>
+        </select>
 
-            </div>
+        <!-- solo mostrata este campo si es edicion -->
+        <div class="floating-group" *ngIf="animalId">
+            <select id="statusId" formControlName="statusId">
+                <ng-container *ngFor="let status of animalStatuses">
+                <option [value]="status.id">
+                    {{ status.name }}
+                </option>
+                </ng-container>
+            </select>
+            <label for="statusId">Estado</label>
+        </div>
 
-            <div class="form_section">
-                <select name="gender" id="" class="form-control mt-1">
-                    <option value="1">Macho</option>
-                    <option value="2">Hembra</option>
-                </select>
+        <!-- solo mostrata este campo si es edicion o compra del aminal-->
+        <div class="floating-group" *ngIf="animalId || origen === '2'">
+            <select id="stageId" formControlName="stageId">
+                <ng-container *ngFor="let stage of animalStages">
+                <option [value]="stage.id">
+                    {{ stage.name }}
+                </option>
+                </ng-container>
+            </select>
+            <label for="statusId">Etapa</label>
+        </div>
 
-                <input 
-                    type="date" 
-                    placeholder="Fecha de nacimiento" 
-                    class="form-control mt-1"
-                >
+        <input
+            type="number"
+            placeholder="Peso"
+            class="form-control mt-1"
+            style="width: 100px;"
+            id="weight"
+            formControlName="weight"
+            (keypress)="allowOnlyNumbersMaxMinAndTwoDecimals($event, pesoControl.value || '', 1, 1900)"
+            min="{{min_weight}}"
+            max="{{max_weight}}"
+        />
 
-                <input
-                    type="text"
-                    inputmode="decimal"
-                    placeholder="Peso"
-                    [formControl]="pesoControl"
-                    (keypress)="allowOnlyNumbersMaxMinAndTwoDecimals($event, pesoControl.value || '', 1, 1900)"
-                    class="form-control mt-1"
-                    maxlength="7"
-                    style="width: 100px;"
-                />
+        <div *ngIf="pesoControl.hasError('min')">
+        El peso mínimo es {{min_weight}} lb.
+        </div>
+        <div *ngIf="pesoControl.hasError('max')">
+        El peso máximo es {{max_weight}} lbs.
+        </div>  
+        
+        
+        <input
+            type="text"
+            placeholder="Raza"
+            class="form-control mt-1"
+            maxlength="20"
+            style="width: 100px;"
+            formControlName="breed"
+        />
+    </div>
 
-                <div *ngIf="pesoControl.hasError('min')">
-                El peso mínimo es 1 lb.
-                </div>
-                <div *ngIf="pesoControl.hasError('max')">
-                El peso máximo es 1900 lbs.
-                </div>
+    <div *ngIf="origen === '2'" class="form_section" id="bought">
+        <input 
+            type="date" 
+            placeholder="Fecha de nacimiento" 
+            class="form-control mt-1"
+            formControlName="birthDate" 
+        >
+    </div>
 
-                <input 
-                    type="date" 
-                    placeholder="Fecha de registro" 
-                    class="form-control mt-1"
-                >            
-
-            </div>
-
-            <button type="submit" class="sqr_rds mt-1" style="display: flex; margin: 0; padding: 0; background-color: transparent; border: 0px transparent;" ><img src="/assets/icons/save_disk.png" alt="" class="sqr_rds" style="width: 5rem; height: 5rem;"></button>
+    <button type="submit" 
+        class="sqr_rds mt-1" 
+        style="display: flex; margin: 0; padding: 0; background-color: transparent; border: 0px transparent;" >
+        <img    src="/assets/icons/save_disk.png" 
+                alt="" 
+                class="sqr_rds" 
+                style="width: 5rem; height: 5rem;"
+        >
+    </button>
         
 </form>

@@ -1,42 +1,47 @@
 import { Injectable } from '@angular/core';
-import { Litter } from '../../models/litter.model';
+import { LitterRead, LitterWrite, LitterUpdate } from '../../models/litter.model';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Animal } from '../../models/animal.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LitterService {
 
-  private litters: Litter[] = [
+  private ip = '192.168.1.196';
+  private port = '8080'
 
-    { id: 1, mother: 1, father: 2, startDate: '14/01/2025',
-      endDate: '01/07/2025', bornMales: 2, bornFemales: 3, unbornMales: 1,
-      unbornFemales: 0, status: 'finalizado', notes: '', updated: '01/07/2025'
-    },
+  private apiAnimalUrl = `http://${this.ip}:${this.port}/api/Animal`;
 
-    { id: 2, mother: 1, father: 2, startDate: '01/03/2025',
-      endDate: '22/03/2025', bornMales: 0, bornFemales: 0, unbornMales: 0,
-      unbornFemales: 0, status: 'no fecundado', notes: '', updated: '14/03/2025'
-    },
+  private apiAnimalReproductiveRecordUrl = `http://${this.ip}:${this.port}/api/AnimalReproductiveRecord`;
 
-    { id: 3, mother: 1, father: 2, startDate: '01/08/2025',
-      endDate: '', bornMales: 0, bornFemales: 0, unbornMales: 0,
-      unbornFemales: 0, status: 'fecundado', notes: '', updated: '22/08/2025'
-    },
+  constructor(private http: HttpClient) {}
 
+  /** Obtener todos los animales */
+  getAllAnimals(): Observable<Animal[]> {
+    return this.http.get<Animal[]>(this.apiAnimalUrl);
+  }
 
-    { id: 4, mother: 1, father: 2, startDate: '13/09/2025',
-      endDate: '', bornMales: 0, bornFemales: 0, unbornMales: 0,
-      unbornFemales: 0, status: 'celo', notes: '', updated: '13/09/2025'
-    },
+  getFinishedLitters(): Observable<LitterRead[]> {
+    return this.http.get<LitterRead[]>(this.apiAnimalReproductiveRecordUrl);
+  }
 
-    { id: 5, mother: 1, father: 2, startDate: '14/01/2025',
-      endDate: '28/02/2025', bornMales: 0, bornFemales: 0, unbornMales: 2,
-      unbornFemales: 4, status: 'aborto', notes: '', updated: '13/09/2025'
-    },
+  /** Obtener todos los registros de partos*/
+  getAll(): Observable<LitterRead[]> {
+    return this.http.get<LitterRead[]>(this.apiAnimalReproductiveRecordUrl);
+  }
 
-  ];
+  /** Obtener un registro de parto por id*/
+  getById(id: number): Observable<LitterRead> {
+    return this.http.get<LitterRead>(`${this.apiAnimalReproductiveRecordUrl}/${id}`);
+  }
 
-  getAll(): Litter[] {
-    return this.litters;
+  create(litter: LitterWrite): Observable<LitterWrite> {
+    return this.http.post<LitterWrite>(this.apiAnimalReproductiveRecordUrl, litter);
+  }
+
+  update(id: number, litter: LitterUpdate): Observable<LitterWrite> {
+    return this.http.put<LitterWrite>(`${this.apiAnimalReproductiveRecordUrl}/${id}`, litter);
   }
 }

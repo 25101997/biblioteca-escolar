@@ -16,19 +16,21 @@ namespace Infrastructure.Repositories
 
         public async Task<IEnumerable<Animal>> GetAllAsync() =>
             await _context.Animals
-                .Include(a => a.Origin)
-                .Include(a => a.Status)
-                .Include(a => a.Stage)
+                .Include(a => a.Litter) 
+                    .ThenInclude(l => l.Mother) 
+                .Include(a => a.Litter) 
+                    .ThenInclude(l => l.Father)
                 .AsNoTracking()
                 .ToListAsync();
 
         public async Task<Animal?> GetByIdAsync(int id) =>
             await _context.Animals
-                .Include(a => a.Origin)
-                .Include(a => a.Status)
-                .Include(a => a.Stage)
+                .Include(a => a.Litter) 
+                    .ThenInclude(l => l.Mother) 
+                .Include(a => a.Litter) 
+                    .ThenInclude(l => l.Father)
                 .AsNoTracking()
-                .FirstOrDefaultAsync(a => a.Id == id);    
+                .FirstOrDefaultAsync(a => a.Id == id);
 
         public async Task<Animal> AddAsync(Animal entity)
         {
@@ -36,6 +38,7 @@ namespace Infrastructure.Repositories
             entity.Origin = null;
             entity.Status = null;
             entity.Stage = null;
+            entity.Litter = null;
             entity.BirthDate = DateTime.SpecifyKind(entity.BirthDate, DateTimeKind.Utc);
 
             _context.Animals.Add(entity);

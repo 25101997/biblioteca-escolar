@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { LitterListComponent } from './litter-list.component';
 
 describe('LitterListComponent', () => {

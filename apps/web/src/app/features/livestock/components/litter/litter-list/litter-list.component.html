@@ -13,13 +13,13 @@
                         placeholder="Buscar"
                         class="form-control searchInput"
                         [(ngModel)]="searchValue"
-                        (ngModelChange)="onSearch(searchField, searchValue)"
+                        
                     />
 
                     <button
                         type="button"
                         class="btn btn__primary__outline"
-                        (click)="onSearch(searchField, searchValue)"
+                        
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                         <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
@@ -75,7 +75,7 @@
                             <span class="center_x_y">
                             Inicio
                             <label class="center_x_y">
-                                <input type="checkbox" hidden (click)="orderBy('startDate')">
+                                <input type="checkbox" hidden (click)="orderBy('created')">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16" class="icon">
                                 <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5"/>
                                 </svg>
@@ -85,9 +85,9 @@
 
                         <th><!--inicio columna Fin-->
                             <span class="center_x_y">
-                            Fin
+                            Actulizado
                             <label class="center_x_y">
-                                <input type="checkbox" hidden (click)="orderBy('endDate')">
+                                <input type="checkbox" hidden (click)="orderBy('updated')">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16" class="icon">
                                 <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5"/>
                                 </svg>
@@ -138,12 +138,12 @@
                 <tbody>
                     <tr *ngFor="let litter of data">
                         <td>{{ litter.id }}</td>
-                        <td>{{ litter.mother }}</td>
-                        <td>{{ litter.father }}</td>
-                        <td>{{ litter.startDate }}</td>
-                        <td>{{ litter.endDate }}</td>
-                        <td>{{ litter.bornMales }}</td>
-                        <td>{{ litter.bornFemales }}</td>
+                        <td>{{ litter.mother?.id }}</td>
+                        <td>{{ litter.father?.id }}</td>
+                        <td>{{ litter.created | date:'dd/MM/yyyy' }}</td>
+                        <td>{{ litter.updated | date:'dd/MM/yyyy' }}</td>
+                        <td>{{ litter.bornMale }}</td>
+                        <td>{{ litter.bornFemale }}</td>
                         <td>{{ litter.status }}</td>
                         <td>
                             <button [routerLink]="['/livestock/litter-edit', litter.id]" class="btn btn__primary__outline">Editar</button>

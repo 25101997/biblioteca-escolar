@@ -14,39 +14,14 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<AnimalReproductiveRecord>> GetAllAsync() =>
-            await _context.AnimalReproductiveRecords
-                .Include(r => r.Mother!)
-                    .ThenInclude(a => a.Origin)
-                .Include(r => r.Mother!)
-                    .ThenInclude(a => a.Status)
-                .Include(r => r.Mother!)
-                    .ThenInclude(a => a.Stage)
-                .Include(r => r.Father!)
-                    .ThenInclude(a => a.Origin)
-                .Include(r => r.Father!)
-                    .ThenInclude(a => a.Status)
-                .Include(r => r.Father!)
-                    .ThenInclude(a => a.Stage)
-                .AsNoTracking()
-                .ToListAsync();
+        public async Task<IEnumerable<AnimalReproductiveRecord>> GetAllAsync() => 
+            await _context.AnimalReproductiveRecords 
+            .AsNoTracking() .ToListAsync(); 
 
-        public async Task<AnimalReproductiveRecord?> GetByIdAsync(int id) =>
-            await _context.AnimalReproductiveRecords
-                .Include(r => r.Mother!)
-                    .ThenInclude(a => a.Origin)
-                .Include(r => r.Mother!)
-                    .ThenInclude(a => a.Status)
-                .Include(r => r.Mother!)
-                    .ThenInclude(a => a.Stage)
-                .Include(r => r.Father!)
-                    .ThenInclude(a => a.Origin)
-                .Include(r => r.Father!)
-                    .ThenInclude(a => a.Status)
-                .Include(r => r.Father!)
-                    .ThenInclude(a => a.Stage)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(r => r.Id == id);
+        public async Task<AnimalReproductiveRecord?> GetByIdAsync(int id) => 
+            await _context.AnimalReproductiveRecords 
+            .AsNoTracking() 
+            .FirstOrDefaultAsync(r => r.Id == id);
 
         public async Task<AnimalReproductiveRecord> AddAsync(AnimalReproductiveRecord entity)
         {

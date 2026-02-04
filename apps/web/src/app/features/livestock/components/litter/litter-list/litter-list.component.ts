@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LitterService } from '../../../services/litter/litter.service';
-import { Litter } from '../../../models/litter.model';
+import { LitterRead } from '../../../models/litter.model';
 
 @Component({
   selector: 'app-litter-list',
@@ -8,33 +8,27 @@ import { Litter } from '../../../models/litter.model';
   styleUrls: ['./litter-list.component.scss']
 })
 export class LitterListComponent implements OnInit {
-  data: Litter[] = [];
+  data: LitterRead[] = [];
   constructor(private litterService: LitterService) {}
 
   // ---- SEARCH ----
-  searchField: keyof Litter = 'id';
+  searchField: keyof LitterRead = 'id';
   searchValue: string = '';
 
   // ---- ORDEN ----
-  sortColumn: keyof Litter = 'id';
+  sortColumn: keyof LitterRead = 'id';
   sortAsc = true;
 
   ngOnInit(): void {
-    this.data = this.litterService.getAll();
+    this.litterService.getAll().subscribe({
+      next: (data) => {
+        this.data = data;
+      },
+      error: (err) => console.error('Error al cargar estados:', err)
+    });
   }
 
-  onSearch(field: keyof Litter, value: string): void {
-    this.data = this.filterByValue(field, value);
-  }
-
-  filterByValue(field: keyof Litter, value: string): Litter[] {
-    this.data = this.litterService.getAll();
-    return this.data.filter(item =>
-      String(item[field]).toLowerCase().includes(value.toLowerCase())
-    );
-  }
-
-  orderBy(column: keyof Litter): void {
+  orderBy(column: keyof LitterRead): void {
     // Si el usuario vuelve a hacer clic en la misma columna, invertimos el orden
     if (this.sortColumn === column) {
       this.sortAsc = !this.sortAsc;

@@ -1,14 +1,39 @@
-export interface Litter {
+import { Animal } from "./animal.model";
+
+export interface LitterRead {
   id: number;
-  mother: number;
-  father: number;
-  startDate: string;
-  endDate: string;
-  bornMales: number;
-  bornFemales: number;
-  unbornMales: number;
-  unbornFemales: number;
+  mother?: Animal;
+  father?: Animal;
+  bornMale: number;
+  bornFemale: number;
+  abortedMale: number;
+  abortedFemale: number;
+  totalBorn: number;
   status: string;
   notes: string;
   updated: string;
+  created: string;
+}
+
+export interface LitterWrite {
+  motherId: number;
+  fatherId: number;
+  bornMale: number;
+  bornFemale: number;
+  abortedMale: number;
+  abortedFemale: number;
+  status: string;
+  notes: string;
+}
+
+export interface LitterUpdate {
+  id: number;
+  motherId: number;
+  fatherId: number;
+  bornMale: number;
+  bornFemale: number;
+  abortedMale: number;
+  abortedFemale: number;
+  status: string;
+  notes: string;
 }

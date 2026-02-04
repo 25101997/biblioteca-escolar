@@ -20,7 +20,6 @@ namespace Application.Mapping
             CreateMap<AnimalStatus, AnimalStatusReadDto>();
             CreateMap<AnimalStage, AnimalStageReadDto>();
 
-
             //.ForMember(dest => dest.Origin, opt => opt.MapFrom(src => src.Origin!.Name))
             //.ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status!.Name))
             //.ForMember(dest => dest.Stage, opt => opt.MapFrom(src => src.Stage!.Name))
