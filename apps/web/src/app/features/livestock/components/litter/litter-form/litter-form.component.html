@@ -16,7 +16,7 @@
                 </option> 
             </ng-container> 
         </select> 
-        <label for="madreSelect">Madre</label> 
+        <label for="madreId">Madre</label> 
     </div>
     
     <!-- PADRE -->
@@ -24,16 +24,15 @@
       <select id="padreId" formControlName="padreId">
         <ng-container *ngFor="let padre of machos">
           <option *ngIf="padre.sex === 'macho'" [value]="padre.id">
-            {{ '00000' }}{{ padre.id }}
+            {{ padre.id.toString().padStart(5, '0') }}
           </option>
         </ng-container>
       </select>
       <label for="padreId">Padre</label>
     </div>
 
-    <div *ngIf="isEditMode == true">
       <!-- ESTADO -->
-      <div class="floating-group">
+      <div class="floating-group" *ngIf="isEditMode == true">
         <select id="estado" formControlName="status" required>
           <option value="" disabled selected hidden>Seleccione estado</option>
           <ng-container *ngFor="let status of statuses">
@@ -44,7 +43,6 @@
         </select>
         <label for="estado">Estado</label>
       </div>
-    </div>
 
     <!-- HEMBRAS NACIDAS -->
     <div  class="floating-group" 

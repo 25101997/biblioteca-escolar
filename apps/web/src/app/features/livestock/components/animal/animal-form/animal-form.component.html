@@ -17,12 +17,12 @@
     </div>
 
     <div *ngIf="origen === '1' && littersFinalizados.length > 0" class="form_section">
-        <select id="litters">
+        <select id="litterId" formControlName="litterId">
             <option *ngFor="let litter of littersFinalizados" [value]="litter.id">
             {{ litter.id.toString().padStart(5, '0') }} - {{ litter.status }}
             </option>
         </select>
-        <label for="litters">Camada</label>
+        <label for="litterId">Camada</label>
     </div>
 
 
@@ -30,8 +30,11 @@
         <span>No hay partos registrados.</span>
     </div>
 
+    <div *ngIf="origen === '1' && litters.length > 0 && littersFinalizados.length < 1" class="form_section">
+        <span>Las cerdas aun estan gestando.</span>
+    </div>
 
-    <div *ngIf="origen === '2' || litters.length > 0" class="form_section">
+    <div *ngIf="origen === '2' || littersFinalizados.length > 0" class="form_section">
 
         <select name="gender" id="" class="form-control mt-1" formControlName="sex" >
             <option value="macho">Macho</option>

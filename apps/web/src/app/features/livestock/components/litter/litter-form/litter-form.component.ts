@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { AnimalService } from '../../../services/animal/animal.service';
 import { LitterService } from '../../../services/litter/litter.service';
-import { Animal } from '../../../models/animal.model';
+import { AnimalRead } from '../../../models/animal.model';
 import { AnimalUpdate } from '../../../models/animal.model';
 import { AnimalStage } from '../../../models/animal.model';
 import { LitterRead, LitterWrite, LitterUpdate } from '../../../models/litter.model';
@@ -19,10 +19,10 @@ export class LitterFormComponent {
   isEditMode = false;
   litterId: number | null = null;
   animalStages: AnimalStage[] = [];
-  motherSelect? : Animal;
-  animals: Animal[] = [];
-  hembras: Animal[] = []; 
-  machos: Animal[] = [];
+  motherSelect? : AnimalRead;
+  animals: AnimalRead[] = [];
+  hembras: AnimalRead[] = []; 
+  machos: AnimalRead[] = [];
   statuses: string[] = ['registrado','fecundado','no fecundado','abortado', 'finalizado'];
   
   // Variables temporales selecionadas
@@ -103,8 +103,8 @@ export class LitterFormComponent {
 
     this.litterService.getById(this.litterId).subscribe({
       next: (data) => {
-        this.hembras.push(data.mother as Animal)
-        this.machos.push(data.father as Animal)
+        this.hembras.push(data.mother as AnimalRead)
+        this.machos.push(data.father as AnimalRead)
 
         this.litterForm.patchValue({
           id: data.id,
@@ -152,7 +152,7 @@ export class LitterFormComponent {
           for(const stage of stages){
             if(stage.name.toLocaleLowerCase()=== 'gestacion'){
               this.animalService.getById(Number(this.litterForm.value.madreId)).subscribe({
-                  next: (madre: Animal) => {
+                  next: (madre: AnimalRead) => {
                     const motherUpdated: AnimalUpdate = {
                       id: Number(madre.id),
                       originId: Number(madre.origin?.id),

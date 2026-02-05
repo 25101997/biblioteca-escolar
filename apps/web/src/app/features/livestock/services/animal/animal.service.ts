@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Animal } from '../../models/animal.model';
+import { AnimalRead } from '../../models/animal.model';
 import { AnimalWrite, AnimalUpdate } from '../../models/animal.model';
 import { AnimalStatus } from '../../models/animal.model';
 import { AnimalOrigin } from '../../models/animal.model';
@@ -39,12 +39,12 @@ export class AnimalService {
   }
 
   /** Obtener todos los animales */
-  getAll(): Observable<Animal[]> {
-    return this.http.get<Animal[]>(this.apiUrl);
+  getAll(): Observable<AnimalRead[]> {
+    return this.http.get<AnimalRead[]>(this.apiUrl);
   }
 
-  getById(id: number): Observable<Animal> {
-    return this.http.get<Animal>(`${this.apiUrl}/${id}`);
+  getById(id: number): Observable<AnimalRead> {
+    return this.http.get<AnimalRead>(`${this.apiUrl}/${id}`);
   }
 
   create(animal: AnimalWrite): Observable<AnimalWrite> {

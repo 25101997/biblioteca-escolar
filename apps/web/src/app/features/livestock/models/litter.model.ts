@@ -1,9 +1,9 @@
-import { Animal } from "./animal.model";
+import { AnimalRead } from "./animal.model";
 
 export interface LitterRead {
   id: number;
-  mother?: Animal;
-  father?: Animal;
+  mother?: AnimalRead;
+  father?: AnimalRead;
   bornMale: number;
   bornFemale: number;
   abortedMale: number;

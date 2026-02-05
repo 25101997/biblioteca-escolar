@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AnimalService } from '../../../services/animal/animal.service';
-import { Animal } from '../../../models/animal.model';
+import { AnimalRead } from '../../../models/animal.model';
 
-type SearchField = keyof Animal | 'edadDias'; // agregamos el campo virtual de edad
+type SearchField = keyof AnimalRead | 'edadDias'; // agregamos el campo virtual de edad
 
 @Component({
   selector: 'app-animal-list',
@@ -11,15 +11,15 @@ type SearchField = keyof Animal | 'edadDias'; // agregamos el campo virtual de e
 })
 export class AnimalListComponent implements OnInit {
   go_back = '/livestock/'
-  animals: Animal[] = [];
-  filteredAnimals: Animal[] = [];
+  animals: AnimalRead[] = [];
+  filteredAnimals: AnimalRead[] = [];
 
   // ---- BÚSQUEDA ----
   searchField: SearchField = 'id';
   searchTerm: string = '';
 
   // ---- ORDEN ----
-  sortColumn: keyof Animal = 'id';
+  sortColumn: keyof AnimalRead = 'id';
   sortAsc = true;
 
   constructor(private animalService: AnimalService) {}
@@ -79,7 +79,7 @@ export class AnimalListComponent implements OnInit {
   }
 
   // Obtiene el valor “buscable” del Animal según el campo elegido
-  private getComparableValue(a: Animal, field: SearchField): string | number | null {
+  private getComparableValue(a: AnimalRead, field: SearchField): string | number | null {
     switch (field) {
       case 'edadDias':
         return this.getAgeInDays(a.birthDate);
@@ -89,7 +89,7 @@ export class AnimalListComponent implements OnInit {
     }
   }
 
-  sortBy(column: keyof Animal) {
+  sortBy(column: keyof AnimalRead) {
     if (this.sortColumn === column) {
       this.sortAsc = !this.sortAsc;
     } else {

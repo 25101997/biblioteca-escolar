@@ -13,7 +13,7 @@ export interface AnimalStage {
   name: string;
 }
 
-export interface Animal {
+export interface AnimalRead {
   id: number;
   origin?: AnimalOrigin;
   status?: AnimalStatus;
@@ -30,6 +30,7 @@ export interface AnimalWrite {
   originId: number;
   statusId: number;
   stageId: number;
+  litterId: number;
   weight: number;
   sex: string;
   breed: string;

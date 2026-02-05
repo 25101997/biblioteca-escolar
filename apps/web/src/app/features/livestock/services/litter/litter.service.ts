@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { LitterRead, LitterWrite, LitterUpdate } from '../../models/litter.model';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Animal } from '../../models/animal.model';
+import { AnimalRead } from '../../models/animal.model';
 
 @Injectable({
   providedIn: 'root'
@@ -19,8 +19,8 @@ export class LitterService {
   constructor(private http: HttpClient) {}
 
   /** Obtener todos los animales */
-  getAllAnimals(): Observable<Animal[]> {
-    return this.http.get<Animal[]>(this.apiAnimalUrl);
+  getAllAnimals(): Observable<AnimalRead[]> {
+    return this.http.get<AnimalRead[]>(this.apiAnimalUrl);
   }
 
   getFinishedLitters(): Observable<LitterRead[]> {

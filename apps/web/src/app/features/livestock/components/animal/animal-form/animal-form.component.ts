@@ -1,14 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'; 
+
+// all about Aninal
 import { AnimalService } from '../../../services/animal/animal.service';
+import {
+  AnimalRead,
+  AnimalWrite,
+  AnimalUpdate,
+  AnimalOrigin,
+  AnimalStatus,
+  AnimalStage
+} from '../../../models/animal.model';
+
+
+// all about Litter
 import { LitterService } from '../../../services/litter/litter.service';
-import { Animal } from '../../../models/animal.model';
-import { AnimalWrite } from '../../../models/animal.model';
-import { AnimalUpdate } from '../../../models/animal.model';
-import { AnimalOrigin } from '../../../models/animal.model';
-import { AnimalStatus } from '../../../models/animal.model';
-import { AnimalStage } from '../../../models/animal.model';
 import { LitterRead } from '../../../models/litter.model';
 
 @Component({
@@ -34,7 +41,7 @@ export class AnimalFormComponent implements OnInit {
   );
 
   litters: LitterRead[] = [];
-  animals: Animal[] = [];
+  animals: AnimalRead[] = [];
   animalStatuses: AnimalStatus[] = [];
   animalOrigins: AnimalOrigin[] = [];
   animalStages: AnimalStage[] = [];
@@ -145,7 +152,6 @@ export class AnimalFormComponent implements OnInit {
       this.animalForm.patchValue({
         id: data.id,
         originId: data.origin?.id ?? 0,
-        //litterId: data.litterId,
         statusId: data.status?.id ?? 0,
         stageId: data.stage?.id ?? 0,
         weight: data.weight,
@@ -197,60 +203,42 @@ export class AnimalFormComponent implements OnInit {
                                       originId: Number(this.animalForm.value.originId),
                                       statusId: Number(1),
                                       stageId: Number(this.animalForm.value.stageId),
+                                      litterId: Number(this.animalForm.value.litterId),
                                       weight: Number(this.animalForm.value.weight),
                                       sex: this.animalForm.value.sex,
                                       breed: this.animalForm.value.breed,
                                       birthDate: this.animalForm.value.birthDate
                                     };
 
-      if(formData.originId == 2){ 
+      if(formData.originId == 1){ 
         formData.stageId = 1
       }
 
-      /*  this.litterService.getById(Number(formData.stageId)).subscribe({
-          next: (data) => {
-
-            // Ajustar fecha para el input type="date" (solo yyyy-MM-dd)
-            const birth = data.birthDate
-              ? data.birthDate.toString().substring(0, 10)
-              : '';
-
-            this.animalForm.patchValue({
-              id: data.id,
-              originId: data.origin?.id ?? 0,
-              statusId: data.status?.id ?? 0,
-              stageId: data.stage?.id ?? 0,
-              weight: data.weight,
-              sex: data.sex,        // 'macho' | 'hembra'
-              breed: data.breed,
-              birthDate: birth
-            });
-
-            // Para que las secciones *ngIf dependan del origen
-            this.origen = String(data.origin?.id ?? '');
-
-            console.log('origen:', this.origen);
-
-            console.log('Form cargado para edición:', this.animalForm.value);
-          },
-          error: () => {
-            console.error('No se pudo cargar el animal.');
-          }
-        });
-
-      }
-
       console.log('Create new animal: ', formData)
-      // Buscar que es estado gestacion exista
+
       this.animalService.create(formData).subscribe(() => {
         this.goBack();
-      });*/
+      });
     }
 
   }
 
   /** Función que se ejecuta cuando se presiona el botón Guardar */
   onSubmit(): void {
+    
+    if(this.animalForm.value.litterId){
+      this.litterService.getById(Number(this.animalForm.value.litterId)).subscribe({
+        next: (data) => {
+          const rawDate = data.updated; // "2026-02-05 00:54:15.128193+00" 
+          const dateObj = new Date(rawDate); 
+          const formatted = dateObj.toISOString().split('T')[0]; // "2026-02-05" 
+          this.animalForm.get('birthDate')?.setValue(formatted);
+        },error: () => {
+          console.error('No se pudo cargar la camada.');
+        }
+      });
+    }
+
     if (this.animalForm.invalid) {
 
       console.log('Formulario inválido');
