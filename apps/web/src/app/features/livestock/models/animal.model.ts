@@ -1,3 +1,5 @@
+import { LitterRead } from "./litter.model";
+
 export interface AnimalOrigin {
   id: number;
   name: string;
@@ -18,6 +20,7 @@ export interface AnimalRead {
   origin?: AnimalOrigin;
   status?: AnimalStatus;
   stage?: AnimalStage;
+  litter?: LitterRead;
   breed: string;
   sex: string;
   weight: number;
@@ -30,7 +33,7 @@ export interface AnimalWrite {
   originId: number;
   statusId: number;
   stageId: number;
-  litterId: number;
+  litterId?: number;
   weight: number;
   sex: string;
   breed: string;
@@ -42,6 +45,7 @@ export interface AnimalUpdate {
   originId: number;
   statusId: number;
   stageId: number;
+  litterId?: number;
   weight: number;
   sex: string;
   breed: string;

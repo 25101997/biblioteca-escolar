@@ -1,18 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnChanges, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'; 
 
 // all about Aninal
 import { AnimalService } from '../../../services/animal/animal.service';
-import {
-  AnimalRead,
-  AnimalWrite,
-  AnimalUpdate,
-  AnimalOrigin,
-  AnimalStatus,
-  AnimalStage
-} from '../../../models/animal.model';
-
+import { AnimalRead } from '../../../models/animal.model';
+import { AnimalWrite } from '../../../models/animal.model';
+import { AnimalUpdate } from '../../../models/animal.model';
+import { AnimalOrigin } from '../../../models/animal.model';
+import { AnimalStatus } from '../../../models/animal.model';
+import { AnimalStage } from '../../../models/animal.model';
 
 // all about Litter
 import { LitterService } from '../../../services/litter/litter.service';
@@ -154,6 +151,7 @@ export class AnimalFormComponent implements OnInit {
         originId: data.origin?.id ?? 0,
         statusId: data.status?.id ?? 0,
         stageId: data.stage?.id ?? 0,
+        litterId: data.litter?.id ?? null,
         weight: data.weight,
         sex: data.sex,        // 'macho' | 'hembra'
         breed: data.breed,
@@ -184,12 +182,16 @@ export class AnimalFormComponent implements OnInit {
                                       originId: Number(this.animalForm.value.originId),
                                       statusId: Number(this.animalForm.value.statusId),
                                       stageId: Number(this.animalForm.value.stageId),
+                                      litterId: this.animalForm.value.litterId,
                                       weight: Number(this.animalForm.value.weight),
                                       sex: this.animalForm.value.sex,
                                       breed: this.animalForm.value.breed,
                                       birthDate: this.animalForm.value.birthDate
                                     };
 
+      if(formData.litterId){
+        formData.litterId = Number(formData.litterId)
+      }
                                     
       console.log('Update animal: ', formData)
 
@@ -203,7 +205,7 @@ export class AnimalFormComponent implements OnInit {
                                       originId: Number(this.animalForm.value.originId),
                                       statusId: Number(1),
                                       stageId: Number(this.animalForm.value.stageId),
-                                      litterId: Number(this.animalForm.value.litterId),
+                                      litterId: this.animalForm.value.litterId,
                                       weight: Number(this.animalForm.value.weight),
                                       sex: this.animalForm.value.sex,
                                       breed: this.animalForm.value.breed,
@@ -212,6 +214,10 @@ export class AnimalFormComponent implements OnInit {
 
       if(formData.originId == 1){ 
         formData.stageId = 1
+      }
+
+      if(formData.litterId){
+        formData.litterId = Number(formData.litterId)
       }
 
       console.log('Create new animal: ', formData)
@@ -226,18 +232,26 @@ export class AnimalFormComponent implements OnInit {
   /** Función que se ejecuta cuando se presiona el botón Guardar */
   onSubmit(): void {
     
+    console.log('ingreso a la funcion onSubmit');
+
     if(this.animalForm.value.litterId){
+      console.log('ingreso al if this.animalForm.value.litterId')
       this.litterService.getById(Number(this.animalForm.value.litterId)).subscribe({
-        next: (data) => {
-          const rawDate = data.updated; // "2026-02-05 00:54:15.128193+00" 
-          const dateObj = new Date(rawDate); 
-          const formatted = dateObj.toISOString().split('T')[0]; // "2026-02-05" 
-          this.animalForm.get('birthDate')?.setValue(formatted);
-        },error: () => {
-          console.error('No se pudo cargar la camada.');
-        }
-      });
-    }
+          next: (data) => {
+            const rawDate = data.updated; // "2026-02-05 00:54:15.128193+00" 
+            const dateObj = new Date(rawDate); 
+            const formatted = dateObj.toISOString().split('T')[0]; // "2026-02-05" 
+            this.animalForm.get('birthDate')?.setValue(formatted);
+            if(!this.animalForm.invalid){
+              this.saveAnimal();
+            }
+        },
+          error: () => {
+            console.error('No se pudo cargar la camada.');
+          }
+        });
+      }
+
 
     if (this.animalForm.invalid) {
 
@@ -254,9 +268,11 @@ export class AnimalFormComponent implements OnInit {
 
       this.animalForm.markAllAsTouched(); 
       return; 
+    }else{
+      this.saveAnimal();
     }
 
-    this.saveAnimal();
+    
   }
 
   /** Reset del formulario */
