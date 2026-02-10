@@ -8,7 +8,7 @@
   <div class="form_section">
 
     <!-- MADRE -->
-    <div class="floating-group"> 
+    <div class="floating-group" *ngIf="hembras.length > 0">
         <select id="madreId" formControlName="madreId" required> 
             <ng-container *ngFor="let madre of hembras">
                 <option *ngIf="madre.sex === 'hembra'" [value]="madre.id"> 
@@ -18,9 +18,14 @@
         </select> 
         <label for="madreId">Madre</label> 
     </div>
+
+    <div class="floating-group" *ngIf="hembras.length < 1">
+        <input value="Sin hembras disponibles" name="SinHembras" disabled>
+        <label for="SinHembras">Madre</label> 
+    </div>
     
     <!-- PADRE -->
-    <div class="floating-group">
+    <div class="floating-group" *ngIf="machos.length > 0">
       <select id="padreId" formControlName="padreId">
         <ng-container *ngFor="let padre of machos">
           <option *ngIf="padre.sex === 'macho'" [value]="padre.id">
@@ -31,18 +36,23 @@
       <label for="padreId">Padre</label>
     </div>
 
-      <!-- ESTADO -->
-      <div class="floating-group" *ngIf="isEditMode == true">
-        <select id="estado" formControlName="status" required>
-          <option value="" disabled selected hidden>Seleccione estado</option>
-          <ng-container *ngFor="let status of statuses">
-            <option [value]="status">
-              {{ status }}
-            </option>
-          </ng-container>
-        </select>
-        <label for="estado">Estado</label>
+      <div class="floating-group" *ngIf="machos.length < 1">
+        <input value="Sin machos disponibles" name="SinMachos" disabled>
+        <label for="SinMachos">Padre</label>
       </div>
+
+      <!-- ESTADO -->
+    <div class="floating-group" *ngIf="isEditMode == true">
+      <select id="estado" formControlName="status" required>
+        <option value="" disabled selected hidden>Seleccione estado</option>
+        <ng-container *ngFor="let status of statuses">
+          <option [value]="status">
+            {{ status }}
+          </option>
+        </ng-container>
+      </select>
+      <label for="estado">Estado</label>
+    </div>
 
     <!-- HEMBRAS NACIDAS -->
     <div  class="floating-group" 

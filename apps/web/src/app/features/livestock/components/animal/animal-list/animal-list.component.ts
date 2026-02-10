@@ -99,10 +99,17 @@ export class AnimalListComponent implements OnInit {
     this.applyFilters();
   }
 
+
   getAgeInDays(birthDate: string): number {
     const birth = new Date(birthDate);
     const today = new Date();
+
+    // Normalizar ambas fechas a medianoche (00:00:00) en horario local
+    birth.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
     const diff = today.getTime() - birth.getTime();
-    return Math.floor(diff / (1000 * 60 * 60 * 24));
+    return Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24)));
   }
+
 }

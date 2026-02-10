@@ -4,12 +4,8 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 
 // all about Aninal
 import { AnimalService } from '../../../services/animal/animal.service';
-import { AnimalRead } from '../../../models/animal.model';
-import { AnimalWrite } from '../../../models/animal.model';
-import { AnimalUpdate } from '../../../models/animal.model';
-import { AnimalOrigin } from '../../../models/animal.model';
-import { AnimalStatus } from '../../../models/animal.model';
-import { AnimalStage } from '../../../models/animal.model';
+import { AnimalRead, AnimalWrite, AnimalUpdate } from '../../../models/animal.model';
+import { AnimalOrigin, AnimalStatus, AnimalStage } from '../../../models/animal.model';
 
 // all about Litter
 import { LitterService } from '../../../services/litter/litter.service';
@@ -44,6 +40,13 @@ export class AnimalFormComponent implements OnInit {
   animalStages: AnimalStage[] = [];
   animalForm!: FormGroup;
   origen = '';
+
+  availableMales: number = 0;
+  availableFemales: number = 0;
+  bornMales: number = 0;
+  bornFemales: number = 0;
+  registeredMales: number = 0;
+  registeredFemales: number = 0;
 
   // Variables temporales para guardar eventos del formulario
   estado = '';
@@ -107,6 +110,30 @@ export class AnimalFormComponent implements OnInit {
     });
    
     console.log(this.animalForm.value.breed);
+
+    this.animalForm.get('litterId')?.valueChanges.subscribe((litterId: number | null) => {
+      if (!litterId) return;
+      console.log('entro a change de litterId', litterId)
+      this.onLitterChange(Number(litterId));
+    });
+
+    this.animalForm.get('originId')?.valueChanges.subscribe((originId: number | null) => {
+      if (!originId) return;
+      originId = Number(originId);
+
+      console.log('entro a change de originId', originId)
+
+      if(originId == 2){
+        this.availableMales = 1;
+        this.availableFemales = 1;
+      }else{
+        this.availableMales = 0;
+        this.availableFemales = 0;
+      }
+
+      this.animalForm.get('sex')?.reset(null);
+      this.animalForm.get('litterId')?.reset(null);
+    });
   }
 
   private initForm(): void {
@@ -250,7 +277,7 @@ export class AnimalFormComponent implements OnInit {
             console.error('No se pudo cargar la camada.');
           }
         });
-      }
+    }
 
 
     if (this.animalForm.invalid) {
@@ -288,14 +315,6 @@ export class AnimalFormComponent implements OnInit {
   /** Navega hacia atrás */
   goBack(): void {
     this.router.navigate(['/livestock/animal-list']);
-  }
-
-  onOrigenChange(event: Event) {
-
-    const selectElement = event.target as HTMLSelectElement; 
-    this.origen = selectElement.value;
-    const selectedText = selectElement.options[selectElement.selectedIndex].text; 
-
   }
 
   allowOnlyNumbers(event: KeyboardEvent) {
@@ -383,6 +402,42 @@ export class AnimalFormComponent implements OnInit {
 
   get littersFinalizados() { 
     return this.litters.filter(l => l.status === 'finalizado'); 
+  }
+
+  onOriginChange(event: Event) {
+    const selectElement = event.target as HTMLSelectElement; 
+    this.origen = selectElement.value;
+    const selectedText = selectElement.options[selectElement.selectedIndex].text;
+  }
+
+  onLitterChange(litterId: number) {
+    const litter = this.littersFinalizados.find(l => l.id === litterId);
+
+    if (!litter) return;
+
+    const malesRegistered = this.animals.filter(
+      a => a.litter?.id === litterId && a.sex === 'macho'
+    ).length;
+
+    const femalesRegistered = this.animals.filter(
+      a => a.litter?.id === litterId && a.sex === 'hembra'
+    ).length;
+
+    this.availableMales = litter.bornMale - malesRegistered;
+    this.availableFemales = litter.bornFemale - femalesRegistered;
+    this.bornMales = litter.bornMale;
+    this.bornFemales = litter.bornFemale;
+    this.registeredFemales = femalesRegistered;
+    this.registeredMales = malesRegistered;
+
+    this.animalForm.get('sex')?.reset(null);
+
+    
+    console.log(litter)
+    const rawDate = litter.updated; // "2026-02-05 00:54:15.128193+00" 
+    const dateObj = new Date(rawDate); 
+    const formatted = dateObj.toISOString().split('T')[0]; // "2026-02-05" 
+    this.animalForm.get('birthDate')?.setValue(formatted);
   }
 
 }

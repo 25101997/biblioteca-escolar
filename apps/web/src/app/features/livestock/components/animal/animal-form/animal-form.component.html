@@ -6,7 +6,7 @@
     <h2 class="form_title">Agregar un nuevo animal</h2>
 
     <div class="floating-group">
-        <select id="origiId" formControlName="originId" [value]="origen" (change)="onOrigenChange($event)">
+        <select id="origiId" formControlName="originId" [value]="origen" (change)="onOriginChange($event)">
             <ng-container *ngFor="let origin of animalOrigins">
                 <option [value]="origin.id" >
                     {{ origin.name }}
@@ -23,6 +23,11 @@
             </option>
         </select>
         <label for="litterId">Camada</label>
+
+        <div>
+            Hembras registradas {{registeredFemales}}/{{bornFemales}}.
+            Machos registrados {{registeredMales}}/{{bornMales}}.
+        </div>
     </div>
 
 
@@ -37,8 +42,8 @@
     <div *ngIf="origen === '2' || littersFinalizados.length > 0" class="form_section">
 
         <select name="gender" id="" class="form-control mt-1" formControlName="sex" >
-            <option value="macho">Macho</option>
-            <option value="hembra">Hembra</option>
+            <option value="macho" [disabled]="availableMales <= 0">Macho</option>
+            <option value="hembra" [disabled]="availableFemales <= 0">Hembra</option>
         </select>
 
         <!-- solo mostrata este campo si es edicion -->
@@ -96,13 +101,15 @@
     </div>
 
     <div *ngIf="origen === '2'" class="form_section" id="bought">
-        <input 
+
+    </div>
+
+            <input 
             type="date" 
             placeholder="Fecha de nacimiento" 
             class="form-control mt-1"
             formControlName="birthDate" 
         >
-    </div>
 
     <button type="submit" 
         class="sqr_rds mt-1" 
