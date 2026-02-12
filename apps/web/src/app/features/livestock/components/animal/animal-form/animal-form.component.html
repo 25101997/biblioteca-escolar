@@ -36,7 +36,7 @@
     </div>
 
     <div *ngIf="origen === '1' && litters.length > 0 && littersFinalizados.length < 1" class="form_section">
-        <span>Las cerdas aun estan gestando.</span>
+        <span>Las cerdas aun estan gestando o ya fueron registrados.</span>
     </div>
 
     <div *ngIf="origen === '2' || littersFinalizados.length > 0" class="form_section">
@@ -101,15 +101,13 @@
     </div>
 
     <div *ngIf="origen === '2'" class="form_section" id="bought">
-
-    </div>
-
-            <input 
+        <input 
             type="date" 
             placeholder="Fecha de nacimiento" 
             class="form-control mt-1"
             formControlName="birthDate" 
         >
+    </div>
 
     <button type="submit" 
         class="sqr_rds mt-1" 

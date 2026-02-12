@@ -261,44 +261,19 @@ export class AnimalFormComponent implements OnInit {
     
     console.log('ingreso a la funcion onSubmit');
 
-    if(this.animalForm.value.litterId){
-      console.log('ingreso al if this.animalForm.value.litterId')
-      this.litterService.getById(Number(this.animalForm.value.litterId)).subscribe({
-          next: (data) => {
-            const rawDate = data.updated; // "2026-02-05 00:54:15.128193+00" 
-            const dateObj = new Date(rawDate); 
-            const formatted = dateObj.toISOString().split('T')[0]; // "2026-02-05" 
-            this.animalForm.get('birthDate')?.setValue(formatted);
-            if(!this.animalForm.invalid){
-              this.saveAnimal();
-            }
-        },
-          error: () => {
-            console.error('No se pudo cargar la camada.');
-          }
-        });
-    }
-
-
     if (this.animalForm.invalid) {
-
-      console.log('Formulario inválido');
       // Recorremos todos los controles 
       Object.keys(this.animalForm.controls).forEach(key => { 
         const control = this.animalForm.get(key);
-
         if (control && control.invalid) { 
           console.log(`❌ Control "${key}" inválido:`, control.errors); 
         }  
-
       });
-
       this.animalForm.markAllAsTouched(); 
       return; 
     }else{
       this.saveAnimal();
     }
-
     
   }
 
@@ -401,7 +376,15 @@ export class AnimalFormComponent implements OnInit {
   }
 
   get littersFinalizados() { 
-    return this.litters.filter(l => l.status === 'finalizado'); 
+    return this.litters .filter(l => l.status === 'finalizado') 
+    .filter(litter => { 
+      // Animales registrados con el mismo litterId 
+      const registrados = this.animals.filter(a => a.litter?.id === litter.id).length; 
+      // Total de nacidos en esa camada 
+      const totalNacidos = (litter.bornMale + litter.bornFemale); 
+      // Si aún faltan por registrar, retorna true 
+      return registrados < totalNacidos; }
+    ); 
   }
 
   onOriginChange(event: Event) {
