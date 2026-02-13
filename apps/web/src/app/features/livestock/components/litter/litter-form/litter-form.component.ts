@@ -24,13 +24,17 @@ export class LitterFormComponent {
   hembras: AnimalRead[] = []; 
   machos: AnimalRead[] = [];
   statuses: string[] = ['registrado','fecundado','no fecundado','abortado', 'finalizado'];
-  
+
   // Variables temporales selecionadas
   estadoSelecionado = '';
   max_born = 30;
   min_born = 0;
   previous_digit = 0;
   
+  // 
+  isFinished: boolean = true;
+  isAborted: boolean = true;
+
   constructor(
     private route: ActivatedRoute,
     private animalService: AnimalService,
@@ -117,6 +121,21 @@ export class LitterFormComponent {
           status: data.status,
           notes: data.notes
         });
+
+        if (data.status === 'finalizado' || data.status === 'abortado') {
+          this.litterForm.get('bornAliveMales')?.disable();
+          this.litterForm.get('bornAliveFemales')?.disable();
+          this.litterForm.get('stillbornMales')?.disable();
+          this.litterForm.get('stillbornFemales')?.disable();
+          this.litterForm.get('status')?.disable();
+        }
+
+        if (data.status === 'finalizado') { 
+          this.isFinished = true;
+        }else if(data.status === 'abortado') {
+          this.isAborted = true;
+        }
+
       },
       error: () => {
         console.error('No se pudo cargar la camada.');
@@ -127,17 +146,21 @@ export class LitterFormComponent {
   /** Guardar una nueva camada o actualizar */
   saveLitter(): void {
 
+    const raw = this.litterForm.getRawValue();
+
     const formData: LitterUpdate = {
-                    id: Number(this.litterId),
-                    motherId: Number(this.litterForm.value.madreId),
-                    fatherId: Number(this.litterForm.value.padreId),
-                    bornMale: Number(this.litterForm.value.bornAliveMales),
-                    bornFemale: Number(this.litterForm.value.bornAliveFemales),
-                    abortedMale: Number(this.litterForm.value.stillbornMales),
-                    abortedFemale: Number(this.litterForm.value.stillbornFemales),
-                    status: this.litterForm.value.status,
-                    notes: this.litterForm.value.notes,
-                  };
+      id: raw.id,
+      motherId: Number(raw.madreId),
+      fatherId: Number(raw.padreId),
+      bornMale: Number(raw.bornAliveMales),
+      bornFemale: Number(raw.bornAliveFemales),
+      abortedMale: Number(raw.stillbornMales),
+      abortedFemale: Number(raw.stillbornFemales),
+      status: raw.status,
+      notes: raw.notes
+    };
+
+    console.log('Payload limpio:', formData);
 
     if (this.isEditMode && this.litterId) {
       this.litterService.update(this.litterId, formData).subscribe(() => {
@@ -179,11 +202,19 @@ export class LitterFormComponent {
         error: (err) => console.error('Error al cargar etapas del animal:', err)
       });
     }
+
   }
 
   /** Función que se ejecuta cuando se presiona el botón Guardar */
   onSubmit(): void {
     if (this.litterForm.invalid) {
+      // Recorremos todos los controles 
+      Object.keys(this.litterForm.controls).forEach(key => { 
+        const control = this.litterForm.get(key);
+        if (control && control.invalid) { 
+          console.log(`❌ Control "${key}" inválido:`, control.errors); 
+        }  
+      });
       this.litterForm.markAllAsTouched();
       return;
     }
@@ -254,3 +285,5 @@ export class LitterFormComponent {
   }
 
 }
+
+

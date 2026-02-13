@@ -16,21 +16,22 @@ namespace Infrastructure.Repositories
 
         public async Task<IEnumerable<Animal>> GetAllAsync() =>
             await _context.Animals
-                .Include(a => a.Litter) 
-                    .ThenInclude(l => l.Mother) 
-                .Include(a => a.Litter) 
+                .Include(a => a.Litter!)
+                    .ThenInclude(l => l.Mother)
+                .Include(a => a.Litter!)
                     .ThenInclude(l => l.Father)
                 .AsNoTracking()
                 .ToListAsync();
 
         public async Task<Animal?> GetByIdAsync(int id) =>
             await _context.Animals
-                .Include(a => a.Litter) 
-                    .ThenInclude(l => l.Mother) 
-                .Include(a => a.Litter) 
+                .Include(a => a.Litter!)
+                    .ThenInclude(l => l.Mother)
+                .Include(a => a.Litter!)
                     .ThenInclude(l => l.Father)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Id == id);
+
 
         public async Task<Animal> AddAsync(Animal entity)
         {

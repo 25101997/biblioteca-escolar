@@ -55,8 +55,7 @@
     </div>
 
     <!-- HEMBRAS NACIDAS -->
-    <div  class="floating-group" 
-          *ngIf="(litterForm.value.status == 'finalizado')">
+    <div  class="floating-group" *ngIf="isFinished">
       <input
         id="bornAliveFemales"
         type="number"
@@ -75,8 +74,7 @@
     </div>
 
     <!-- MACHOS NACIDOS -->
-    <div  class="floating-group"
-          *ngIf="(litterForm.value.status == 'finalizado')">
+    <div  class="floating-group" *ngIf="isFinished">
       <input
         id="bornAliveMales"
         type="number"
@@ -96,8 +94,7 @@
 
     <!-- MACHOS ABORTADOS -->
     <div  class="floating-group"
-          *ngIf="(litterForm.value.status == 'finalizado' || 
-          litterForm.value.status == 'abortado')">
+          *ngIf="(isFinished || isAborted)">
       <input
         id="stillbornMales"
         type="number"
@@ -117,8 +114,7 @@
 
     <!-- HEMBRAS ABORTADAS -->
     <div  class="floating-group"
-          *ngIf="(litterForm.value.status == 'finalizado' || 
-          litterForm.value.status == 'abortado')">
+          *ngIf="(isFinished || isAborted)">
       <input
         id="stillbornFemales"
         type="number"
