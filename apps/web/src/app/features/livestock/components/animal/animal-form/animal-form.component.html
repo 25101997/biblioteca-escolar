@@ -3,7 +3,11 @@
     (ngSubmit)="onSubmit()"
     [formGroup]="animalForm"
 >
-    <h2 class="form_title">Agregar un nuevo animal</h2>
+    <h2 class="form_title"> 
+        <span *ngIf="isEditMode" >Editar</span> 
+        <span *ngIf="!isEditMode">Agregar</span> 
+        Registro
+    </h2>
 
     <div class="floating-group">
         <select id="origiId" formControlName="originId" [value]="origen" (change)="onOriginChange($event)">
@@ -30,13 +34,23 @@
         </div>
     </div>
 
-    <div *ngIf="origen === '1' && litters.length < 1" class="form_section">
-        <span>No hay partos registrados.</span>
+    <div *ngIf="!isEditMode">
+        <div *ngIf="origen === '1' && litters.length < 1" class="form_section">
+            <span>No hay partos registrados.</span>
+        </div>
+
+        <div *ngIf="origen === '1' && litters.length > 0 && littersFinalizados.length < 1" class="form_section">
+            <span>Las cerdas aun estan gestando o ya fueron registrados.</span>
+        </div>
     </div>
 
-    <div *ngIf="origen === '1' && litters.length > 0 && littersFinalizados.length < 1" class="form_section">
-        <span>Las cerdas aun estan gestando o ya fueron registrados.</span>
+
+    <!-- Valor camada que se muestra si se esta editando -->
+    <div *ngIf="isEditMode && origen ==='1'" class="floating-group">
+        <input name="litter" type="text" value="{{camadaId.toString().padStart(5, '0')}}" disabled/>
+        <label for="litter">Camada</label>
     </div>
+    
 
     <div *ngIf="origen === '2' || littersFinalizados.length > 0" class="form_section">
 

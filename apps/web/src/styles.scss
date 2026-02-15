@@ -238,3 +238,107 @@ input:checked + .icon {
     font-size: inherit;
   }
 }
+
+
+
+
+
+
+/*--------------------------------------------------------*/
+
+/* =========================
+   Floating group (inputs)
+   ========================= */
+.floating-group {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  max-width: 150px;
+  min-width: 140px;
+  margin-top: 20px;
+  box-sizing: border-box;
+}
+
+/* Estilos base */
+.floating-group input,
+.floating-group select,
+.floating-group textarea {
+  width: 100%;
+  padding: 10px 8px;
+  border: 1px solid #a300b5;
+  border-radius: 6px;
+  background: transparent;
+  font-size: 14px;
+  color: #000;
+  outline: none;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+/* Label flotante */
+.floating-group label {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #fff;
+  padding: 0 4px;
+  font-size: 14px;
+  color: #a300b5;
+  pointer-events: none;
+  transition: 0.2s ease;
+}
+
+/* Foco o valor */
+.floating-group input:focus + label,
+.floating-group select:focus + label,
+.floating-group textarea:focus + label,
+.floating-group input:not(:placeholder-shown) + label,
+.floating-group select:not([value=""]) + label,
+.floating-group textarea:not(:placeholder-shown) + label {
+  top: -8px;
+  font-size: 12px;
+  color: #a300b5;
+}
+
+/* =========================
+   Form container
+   ========================= */
+.form_container {
+  box-sizing: border-box;
+  padding: 1.5rem;
+  max-width: 600px;
+  border-radius: 0.8rem;
+  border: 1px solid #530084;
+  box-shadow: 0 0 8px 4px rgba(83, 0, 132, 0.3);
+}
+
+/* =========================
+   Form sections (layout)
+   ========================= */
+.form_section {
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;         /* ✅ Permitimos wrap */
+  gap: 12px;
+  align-items: flex-start;
+}
+
+/* 🔑 Regla clave: 3 campos por fila */
+.form_section .floating-group {
+  flex: 1 1 calc(33.333% - 12px);  
+  max-width: calc(33.333% - 12px);
+}
+/* Textarea más ancho (Notas) */
+.floating-group textarea {
+  min-height: 80px;
+}
+
+/* =========================
+   Responsive móvil
+   ========================= */
+@media (max-width: 480px) {
+  .form_section .floating-group {
+    flex: 1 1 100%;
+    max-width: 100%;   /* 1 por fila en móvil */
+  }
+}

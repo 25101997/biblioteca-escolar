@@ -41,15 +41,15 @@ export class AnimalFormComponent implements OnInit {
   animalForm!: FormGroup;
   origen = '';
 
+  // Variables temporales para guardar eventos del formulario
   availableMales: number = 0;
   availableFemales: number = 0;
   bornMales: number = 0;
   bornFemales: number = 0;
   registeredMales: number = 0;
   registeredFemales: number = 0;
-
-  // Variables temporales para guardar eventos del formulario
   estado = '';
+  camadaId = 0;
 
   // Otras variables
   max_weight = 1900;
@@ -187,6 +187,7 @@ export class AnimalFormComponent implements OnInit {
 
       // Para que las secciones *ngIf dependan del origen
       this.origen = String(data.origin?.id ?? '');
+      this.camadaId = Number(data.litter?.id);
 
       console.log('origen:', this.origen);
 
