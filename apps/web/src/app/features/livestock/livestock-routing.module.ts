@@ -3,6 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home/home.component';
 import { AnimalListComponent } from './components/animal/animal-list/animal-list.component';
 import { AnimalFormComponent } from './components/animal/animal-form/animal-form.component';
+import { AnimalAddComponent } from './components/animal/animal-add/animal-add.component';
+import { AnimalUpdateComponent } from './components/animal/animal-update/animal-update.component';
 import { LitterListComponent } from './components/litter/litter-list/litter-list.component';
 import { LitterFormComponent } from './components/litter/litter-form/litter-form.component';
 import { FeedListComponent } from './components/feed/feed-list/feed-list.component';
@@ -15,8 +17,10 @@ import { UserFormComponent } from './components/user/user-form/user-form.compone
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'animal-list', component: AnimalListComponent },
-  { path: 'animal-add', component: AnimalFormComponent },
+  { path: 'animal-form', component: AnimalFormComponent },
+  { path: 'animal-add', component: AnimalAddComponent },
   { path: 'animal-add/:id', component: AnimalFormComponent },
+  { path: 'animal-update/:id', component: AnimalUpdateComponent },
   { path: 'litter-list', component: LitterListComponent },
   { path: 'litter-add', component: LitterFormComponent },
   { path: 'litter-edit/:id', component: LitterFormComponent },

@@ -52,7 +52,7 @@ export class AnimalService {
   }
 
   update(id: number, animal: AnimalUpdate): Observable<AnimalUpdate> {
-    console.log('Update animal id: ', id, 'where ', animal)
+    //console.log('Update animal id: ', id, 'where ', animal)
     return this.http.put<AnimalUpdate>(`${this.apiUrl}/${id}`, animal);
   }
 }

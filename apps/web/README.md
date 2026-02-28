@@ -1,6 +1,9 @@
 docker run -it --rm -v "$PWD":/app -u $(id -u):$(id -g) -w /app -p 4200:4200 livestock-fe-angular-app:latest sh
 
+# solo la primera vez cuando fue descargado
+npm install
 
+#
 ng serve --host 0.0.0.0 --port 4200
 
 # TempFe

@@ -1,0 +1,111 @@
+<form class="form_container" [formGroup]="animalForm">
+
+  <h2 class="form_title"> Agregar Registro </h2>
+
+  <div class="form_section">
+    <!-- campo origen/procedencia -->
+        <div class="floating-group">
+            <select formControlName="originId">
+                <ng-container *ngFor="let origin of animalOrigins">
+                    <option [value]="origin.id" >
+                        {{ origin.name }}
+                    </option>
+                </ng-container>
+            </select>
+            <label for="originId">Origen</label>
+        </div>
+
+    <!-- campo camada -->
+        <div class="floating-group" *ngIf="showLitterIdField">
+            <select formControlName="litterId">
+                <ng-container *ngFor="let litter of littersAvailableToRegister">
+                    <option [value]="litter.id" >
+                        {{ litter.id.toString().padStart(5, '0') }} - {{ litter.status }}
+                    </option>
+                </ng-container>
+            </select>
+            <label for="originId">Camada</label>
+        </div>
+
+    <!-- campo animales pendientes de registrar -->
+        <div class="floating-group" *ngIf="showLitterIdField">
+            <div style="display:block;">
+                <span>Hembras registradas {{registeredFemales}}/{{bornFemales}}.</span>
+                <span>Machos registrados {{registeredMales}}/{{bornMales}}.</span>
+            </div>
+        </div>
+
+    <!-- campo fecha de nacimiento -->
+        <div class="floating-group" *ngIf="showBirthdayField">
+            <input
+                type="date"
+                formControlName="birthDate"
+                [min]="minDateString"
+                [max]="todayString"
+            />
+            <label for="birthDate">Fecha de nacimiento</label>
+            <div *ngIf="animalForm.get('birthDate')?.hasError('futureDate')">
+                <span>La fecha de nacimiento no puede ser mayor a hoy</span>
+            </div>
+        </div>
+
+    <!-- campo etapa -->
+        <div class="floating-group" *ngIf="showStageField">
+            <select formControlName="stageId">
+                <ng-container *ngFor="let stage of animalStages">
+                    <option [value]="stage.id" >
+                        {{ stage.name }}
+                    </option>
+                </ng-container>
+            </select>
+            <label for="statusId">Etapa</label>
+        </div>
+
+    <!-- campo sexo -->
+        <div class="floating-group" *ngIf="showSexField">
+            <select formControlName="sex">
+                <option value="macho" [disabled]="availableMales <= 0">Macho</option>
+                <option value="hembra" [disabled]="availableFemales <= 0">Hembra</option>
+            </select>
+            <label for="sex">Sexo</label>
+        </div>
+
+    <!-- campo estado -->
+        <!-- siempre sera registrado cuando es un nuevo registro -->
+
+    <!-- 
+        Lactancia   0 - 21 dias   
+        Destete     21 - 28 dias
+        Preceba     2 - 3 meses
+        Ceba/engorde        3 - 6 meses
+        pubertad    5 - 7 meses (machos ya pueden reproducirce)
+        Reproduccion 7 - 8 meses
+        Gestacion (duracion 144 dias)
+        Maternidad / Lactante (duracion 35 dias)
+    -->
+
+    <!-- campo peso -->
+        <div class="floating-group" *ngIf="showWeightField">
+            <input type="text" formControlName="weight" (keydown)="onlyNumbers($event)"/>
+            <label for="weight">Peso (libras 1 - 1200)</label>
+        </div>
+    
+    <!-- campo raza -->
+        <div class="floating-group" *ngIf="showBreedField">
+            <input type="text" maxlength="25" formControlName="breed"/>
+            <label for="breed">Raza</label>
+        </div>
+    </div><!--end class="form_section" -->
+    
+    <!-- boton para guardar cambios -->
+    <button type="submit" 
+        class="sqr_rds mt-1" 
+        style="display: flex; margin: 0; padding: 0; background-color: transparent; border: 0px transparent;" >
+        <img    src="/assets/icons/save_disk.png" 
+                alt="" 
+                class="sqr_rds" 
+                style="width: 5rem; height: 5rem;"
+        >
+    </button>
+</form>
+

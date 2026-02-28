@@ -1,0 +1,94 @@
+<form class="form_container" [formGroup]="animalForm" (ngSubmit)="onSubmit()" *ngIf="existId">
+  <h2 class="form_title">
+    {{ isEditMode ? 'Editar' : 'Agregar' }} Registro
+  </h2>
+
+  <div class="form_section">
+    <!-- campo camada -->
+        <div class="floating-group">
+            <input [value]="animalData?.origin?.name" disabled/>
+            <label for="originId">Origen</label>
+        </div>
+
+    <!-- campo camada -->
+        <div class="floating-group" *ngIf="animalData?.origin?.name === 'nacido'">
+            <input formControlName="litterId" id="litterId" />
+            <label for="litterId">Camada</label>
+        </div>
+
+    <!-- campo sexo -->
+        <div class="floating-group">
+            <select formControlName="sex" id="sex">
+                <option value="macho">Macho</option>
+                <option value="hembra">Hembra</option>
+            </select>
+            <label for="sex">Sexo</label>
+        </div>
+
+    <!-- campo estado -->
+        <div class="floating-group">
+            <select id="statusId" formControlName="statusId">
+                <ng-container *ngFor="let status of animalStatuses">
+                    <option [value]="status.id"> {{ status.name }} </option>
+                </ng-container>
+            </select>
+            <label for="statusId">Estado</label>
+        </div>
+
+    <!-- campo etapa -->
+        <div class="floating-group">
+            <select id="stageId" formControlName="stageId">
+                <ng-container *ngFor="let stage of animalStages">
+                    <option [value]="stage.id"> {{ stage.name }} </option>
+                </ng-container>
+            </select>
+            <label for="statusId">Etapa</label>
+        </div>
+
+    <!-- 
+    
+    Lactancia   0 - 21 dias   
+    Destete     21 - 28 dias
+    Preceba     2 - 3 meses
+    Ceba/engorde        3 - 6 meses
+    pubertad    5 - 7 meses (machos ya pueden reproducirce)
+    Reproduccion 7 - 8 meses
+    Gestacion (duracion 144 dias)
+    Maternidad / Lactante (duracion 35 dias)
+
+    -->
+
+    <!-- campo peso -->
+        <div class="floating-group">
+            <input type="number" id="weight" formControlName="weight"/>
+            <label for="weight">Peso (libras)</label>
+        </div>
+    
+    <!-- campo raza -->
+        <div class="floating-group">
+            <input type="text" id="breed" formControlName="breed"/>
+            <label for="breed">Raza</label>
+        </div>
+
+    <!-- campo fecha de nacimiento -->
+        <div class="floating-group">
+            <input type="date" id="birthDate" formControlName="birthDate"/>
+            <label for="birthDate">Fecha de nacimiento</label>
+        </div>
+    </div>
+    
+    <!-- boton para guardar cambios -->
+    <button type="submit" 
+        class="sqr_rds mt-1" 
+        style="display: flex; margin: 0; padding: 0; background-color: transparent; border: 0px transparent;" >
+        <img    src="/assets/icons/save_disk.png" 
+                alt="" 
+                class="sqr_rds" 
+                style="width: 5rem; height: 5rem;"
+        >
+    </button>
+</form>
+
+<div *ngIf="!existId" class="form_container" > 
+    <h2 class="form_title">Dato no econtrado en el registro de animales.</h2>
+</div>

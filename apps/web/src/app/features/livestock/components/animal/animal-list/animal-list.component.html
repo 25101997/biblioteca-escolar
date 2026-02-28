@@ -155,7 +155,7 @@
           <td>{{ animal.status?.name }}</td>
           <td>{{ animal.stage?.name }}</td>
           <td>
-            <button [routerLink]="['/livestock/animal-add', animal.id]" class="btn btn__primary__outline">Editar</button>
+            <button [routerLink]="['/livestock/animal-update', animal.id]" class="btn btn__primary__outline">Editar</button>
             <samp></samp>
             <button [routerLink]="['/livestock/edit', animal.id]" class="btn btn__primary__outline">Detalles</button>
           </td>        

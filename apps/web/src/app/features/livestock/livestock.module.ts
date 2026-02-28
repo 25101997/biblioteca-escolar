@@ -14,6 +14,8 @@ import { HealthFormComponent } from './components/health/health-form/health-form
 import { HealthListComponent } from './components/health/health-list/health-list.component';
 import { UserFormComponent } from './components/user/user-form/user-form.component';
 import { UserListComponent } from './components/user/user-list/user-list.component';
+import { AnimalUpdateComponent } from './components/animal/animal-update/animal-update.component';
+import { AnimalAddComponent } from './components/animal/animal-add/animal-add.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +30,8 @@ import { UserListComponent } from './components/user/user-list/user-list.compone
     HealthListComponent,
     UserFormComponent,
     UserListComponent,
+    AnimalUpdateComponent,
+    AnimalAddComponent,
   ],
   imports: [
     CommonModule,
