@@ -57,6 +57,7 @@ export class AnimalAddComponent implements OnInit {
   todayString = new Date().toLocaleDateString('en-CA'); // hora local de la pc
   //todayString = new Date().toISOString().split('T')[0]; // hora internacional
   minDateString = new Date(new Date().setFullYear(new Date().getFullYear() - 25)).toISOString().split('T')[0];
+  ageInDays:  number | null = null;
 
   // Inicio de programa
   ngOnInit(){
@@ -81,6 +82,26 @@ export class AnimalAddComponent implements OnInit {
         return;
       }
       this.onWeightChange(Number(weight));
+    });
+
+    // Si el campo fecha cambia
+    this.animalForm.get('birthDate')?.valueChanges.subscribe((birthDate: Date | null) => {
+      if(birthDate){
+        this.animalForm.get('stageId')?.reset(null);
+        this.showStageField = true;
+        this.showSexField = true;
+        this.showWeightField = true;
+        this.showBreedField = true;
+        const start = new Date(this.todayString);
+        const end = new Date(birthDate);
+        this.ageInDays = this.daysBetween(start, end);
+        console.log('age in days', this.ageInDays);
+      }
+    });
+
+    // Si el campo etapa cambia
+    this.animalForm.get('stageId')?.valueChanges.subscribe((stageId: number | null) => {
+      this.onStageChange(Number(stageId));
     });
   }
 
@@ -121,6 +142,13 @@ export class AnimalAddComponent implements OnInit {
   }
 
   onOriginChange(originId: number) {
+    this.animalForm.get('litterId')?.reset(null);
+    this.animalForm.get('birthDate')?.reset(null);
+    this.animalForm.get('stageId')?.reset(null);
+    this.animalForm.get('sex')?.reset(null);
+    this.animalForm.get('weight')?.reset(null);
+    this.animalForm.get('breed')?.reset(null);
+
     // Resetear campos comunes
     this.showLitterIdField = false;
     this.showBirthdayField = false;
@@ -135,14 +163,9 @@ export class AnimalAddComponent implements OnInit {
       this.showLitterIdField = true;
     } else if (originId === 2) {
       // origin === comprado
-      this.animalForm.get('litterId')?.reset(null);
       this.showBirthdayField = true;
-      this.showStageField = true;
-      this.showSexField = true;
       this.availableMales = 1;
       this.availableFemales = 1;
-      this.showWeightField = true;
-      this.showBreedField = true;
     }
   }
 
@@ -208,6 +231,18 @@ export class AnimalAddComponent implements OnInit {
     }
   }
 
+  onStageChange(stageId: number) {
+    if(stageId === 1){}
+  }
+
+  daysBetween(date1: Date, date2: Date): number { 
+    // Diferencia en milisegundos 
+    const diffInMs = Math.abs(date2.getTime() - date1.getTime());
+    // Convertir a días 
+    return Math.floor(diffInMs / (1000 * 60 * 60 * 24)); 
+  } 
+  
+
   onlyNumbers(event: KeyboardEvent): void { 
     const input = event.target as HTMLInputElement; 
     const char = event.key; 
@@ -252,5 +287,42 @@ export class AnimalAddComponent implements OnInit {
       return selected > today ? { futureDate: true } : null;
     };
   }
+
+  isStageValid(stageId: number): boolean {
+
+    let sex = this.animalForm.get('sex')?.value
+
+    /* 
+        Lactancia   0 - 21 dias   
+        Destete     21 - 28 dias
+        Preceba     2 - 3 meses
+        Ceba/engorde 3 - 6 meses
+        pubertad    5 - 7 meses (machos ya pueden reproducirce)
+        Reproduccion 7 - 8 meses
+        Gestacion (duracion 144 dias) 6 - 8 meses
+        Maternidad / Lactante (duracion 35 dias) 6 - 8 meses
+    */
+
+    const ageInDays = Number(this.ageInDays);
+
+    if(stageId==1 && (ageInDays >= 0 && ageInDays <= 21)){
+      return true
+    }else if(stageId==2 && (ageInDays >= 22 && ageInDays <= 30)){
+      return true
+    }else if(stageId==13 && (ageInDays >= 31 && ageInDays <= 60)){
+      return true
+    }else if(stageId==3 && (Number(this.ageInDays) >= 61 && Number(this.ageInDays) <= 90)){
+      return true
+    }else if(stageId==7 && (Number(this.ageInDays) >= 91 && Number(this.ageInDays) <= 180)){
+      return true
+    }else if(stageId==4 && (Number(this.ageInDays) >= 181 && Number(this.ageInDays) <= 1800)){
+      return true
+    }else if(stageId==5 && ageInDays >= 1800 ){
+      return true
+    }
+
+    return false;
+  }
+
 
 }

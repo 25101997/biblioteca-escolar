@@ -53,7 +53,7 @@
         <div class="floating-group" *ngIf="showStageField">
             <select formControlName="stageId">
                 <ng-container *ngFor="let stage of animalStages">
-                    <option [value]="stage.id" >
+                    <option [value]="stage.id"  [disabled]="!isStageValid(stage.id)" >
                         {{ stage.name }}
                     </option>
                 </ng-container>
