@@ -1,1 +1,74 @@
-<p>estudiante-list works!</p>
+<div class="table__container">
+    <div class="table__top">
+      <div><span class="table__title">Listado de Animales</span></div>
+      <div class="searchbar"><!-- Inicio seccion buscar --></div>
+      <div>
+        <button routerLink="/livestock/animal-add" class="btn btn__primary__outline">Agregar</button>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr >
+          <th><!--inicio columna ID-->
+            <span class="center_x_y">
+              ID 
+            </span>  
+          </th>
+          
+          <th><!--inicio columna Sexo-->  
+            <span class="center_x_y">
+              Sexo
+            </span>  
+          </th>
+
+          <th><!--Columna Peso-->
+            <span class="center_x_y">
+              Peso
+            </span>  
+          </th>
+
+          <th><!--inicio columna Fecha de Nacimiento-->
+            <span class="center_x_y">
+              Fecha de Nacimiento
+            </span>  
+          </th>
+
+
+          <th><!--inicio columna Edad-->
+            <span class="center_x_y">
+              Edad
+            </span>  
+          </th>
+
+          <th><!-- columna Origen-->
+            <span class="center_x_y">
+              Origen
+            </span>  
+          </th>
+          
+          <th>Acciones</th>
+
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr *ngFor="let student of students">
+          <td>{{ student.idLector }}</td>
+          <td>{{ student.ci }}</td>
+          <td>{{ student.nombre }}</td>
+          <td>{{ student.direccion }}</td>
+          <td>{{ student.carrera }}</td>
+          <td>{{ student.edad }}</td>
+          <td>
+            <button [routerLink]="['/livestock/animal-update', student.idLector]" class="btn btn__primary__outline">Editar</button>
+            <samp></samp>
+            <button [routerLink]="['/livestock/edit', student.idLector]" class="btn btn__primary__outline">Detalles</button>
+          </td>        
+        </tr>
+      </tbody>
+    </table>
+    <div class="table__pagination"> 
+      <button class="btn btn__primary__outline" style="margin-right: 2px;">previous</button> <span>1</span> de <span>1</span> <button class="btn btn__primary__outline" style="margin-left: 2px;">next</button>
+    </div>  
+</div>
