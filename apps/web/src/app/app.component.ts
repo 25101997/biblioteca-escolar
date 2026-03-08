@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { NavigationService } from './features/livestock/services/navigation/navigation.service';
 
 @Component({
   selector: 'app-root',
@@ -8,5 +7,4 @@ import { NavigationService } from './features/livestock/services/navigation/navi
 })
 export class AppComponent {
   title = 'temp-fe';
-  constructor(public nav: NavigationService) {}
 }

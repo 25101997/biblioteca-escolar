@@ -1,0 +1,22 @@
+docker pull mcr.microsoft.com/mssql/server:2022-latest
+
+docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=ClaveSegura123!" -p 1433:1433 --name sqlserver-test -d mcr.microsoft.com/mssql/server:2022-latest
+
+docker cp ~/repos/biblioteca-escolar/database/init/insertar_datos.sql sqlserver-test:/insertar_datos.sql
+
+docker exec -it -u 0 sqlserver-test /bin/bash
+
+root@dacc922f80db:/# 
+    apt-get update
+    apt-get install -y mssql-tools unixodbc-dev
+    chmod 644 insertar_datos.sql
+    /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'ClaveSegura123!' -i insertar_datos.sql
+    
+    /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'ClaveSegura123!'
+        1> USE Examen;
+        2> GO
+        3> SELECT name FROM sys.tables;
+        4> GO
+        3> QUIT
+        
+root@dacc922f80db:/# 

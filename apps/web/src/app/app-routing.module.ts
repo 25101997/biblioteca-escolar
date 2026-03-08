@@ -2,11 +2,19 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'livestock', pathMatch: 'full' },
   {
-    path: 'livestock',
+    path: '',
     loadChildren: () =>
-      import('./features/livestock/livestock.module').then(m => m.LivestockModule)
+      import('./features/home/home.module').then(m => m.HomeModule)
+  },
+  {
+    path: 'student',
+    loadChildren: () =>
+      import('./features/student/student.module').then(m => m.StudentModule)
+  },
+  {
+    path: '**',
+    redirectTo: ''
   }
 ];
 
@@ -15,4 +23,3 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule {}
-
