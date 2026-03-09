@@ -1,0 +1,77 @@
+<div class="table__container">
+    <div class="table__top">
+      <div><span class="table__title"> Prestamos </span></div>
+      <div class="searchbar"><!-- Inicio seccion buscar --></div>
+    </div>
+
+    <table>
+      <thead>
+        <tr >
+          <th><!--inicio columna ID-->
+            <span class="center_x_y">
+              Estudiante
+            </span>  
+          </th>
+          
+          <th><!--inicio columna Sexo-->  
+            <span class="center_x_y">
+              Libro
+            </span>  
+          </th>
+
+          <th><!--inicio columna Fecha de Nacimiento-->
+            <span class="center_x_y">
+              Fecha Prestamo
+            </span>  
+          </th>
+
+
+          <th><!--inicio columna Edad-->
+            <span class="center_x_y">
+              Fecha Devolucion
+            </span>  
+          </th>
+
+          <th><!-- columna Origen-->
+            <span class="center_x_y">
+              Devuelto
+            </span>  
+          </th>
+
+          <th><!-- columna Origen-->
+            <span class="center_x_y">
+              Acciones
+            </span>  
+          </th>
+
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let loan of loans">
+            <td>{{ loan.nombreEstudiante }}</td>
+            <td>{{ loan.tituloLibro }}</td>
+            <td>{{ loan.fechaPrestamo | date:'dd/MM/yyyy' }}</td>
+            <td>{{ loan.fechaDevolucion | date:'dd/MM/yyyy' }}</td>
+            <td>
+                <ng-container *ngIf="loan.devuelto; else noDevuelto">
+                    ✅
+                </ng-container>
+                <ng-template #noDevuelto>
+                    ❌
+                </ng-template>
+            </td>
+            <td>
+              <button
+                [routerLink]="['/loan/edit']"
+                [queryParams]="loan"
+                class="btn btn__primary__outline">
+                Editar
+              </button>
+            </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="table__pagination"> 
+      <button class="btn btn__primary__outline" style="margin-right: 2px;">previous</button> <span>1</span> de <span>1</span> <button class="btn btn__primary__outline" style="margin-left: 2px;">next</button>
+    </div>  
+</div>

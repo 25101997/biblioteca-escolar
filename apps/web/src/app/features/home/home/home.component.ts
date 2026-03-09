@@ -8,7 +8,8 @@ import { Component } from '@angular/core';
 export class HomeComponent {
   go_back = '/livestock/'
   menuItems = [
-    { label: 'Prestamos', icon: 'assets/icons/prestamo_libro.png', routerLink: '/prestamo/list'},
+    { label: 'Prestamos', icon: 'assets/icons/prestamo_libro.png', routerLink: '/loan/list'},
+    { label: 'Top5', icon: 'assets/icons/star_5.png', routerLink: '/loan/top'},
     { label: 'Estudiantes', icon: 'assets/icons/user.png', routerLink: '/student/list'},
   ];
 }

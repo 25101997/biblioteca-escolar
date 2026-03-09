@@ -13,6 +13,11 @@ const routes: Routes = [
       import('./features/student/student.module').then(m => m.StudentModule)
   },
   {
+    path: 'loan',
+    loadChildren: () =>
+      import('./features/loan/loan.module').then(m => m.LoanModule)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

@@ -1,0 +1,34 @@
+<form class="form_container" [formGroup]="form" (ngSubmit)="onSubmit()">
+
+    <h2 class="form_title"> 
+        <span>Editar Registro</span> 
+    </h2>
+
+    <div class="form_section">
+    <!-- campo nuevo lector  -->
+        <div class="floating-group">
+            <select formControlName="idLectorNuevo">
+                <ng-container *ngFor="let student of students">
+                    <option [value]="student.idLector"> {{ student.nombre }} </option>
+                </ng-container>
+            </select>
+            <label for="idLectorNuevo">Lector</label>
+        </div>
+
+
+
+  
+
+    </div><!--end class="form_section" -->
+    
+    <!-- boton para guardar cambios -->
+    <button type="submit" 
+        class="sqr_rds mt-1" 
+        style="display: flex; margin: 0; padding: 0; background-color: transparent; border: 0px transparent;" >
+        <img    src="/assets/icons/save_disk.png" 
+                alt="" 
+                class="sqr_rds" 
+                style="width: 5rem; height: 5rem;"
+        >
+    </button>
+</form>
