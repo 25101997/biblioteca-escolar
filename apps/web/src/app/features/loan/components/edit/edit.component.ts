@@ -63,9 +63,9 @@ export class EditComponent {
 
         idLectorNuevo: Number(params['idLector']),
         idLibroNuevo: Number(params['idLibro']),
-        fechaPrestamoNueva: this.toDateTimeLocal(fechaPrestamoOriginal),
+        fechaPrestamoNueva: this.toDateOnly(fechaPrestamoOriginal),
         fechaDevolucion: fechaDevolucionOriginal
-          ? this.toDateTimeLocal(fechaDevolucionOriginal)
+          ? this.toDateOnly(fechaDevolucionOriginal)
           : null,
         devuelto
       });
@@ -90,6 +90,11 @@ export class EditComponent {
   private toDateTimeLocal(value: string | null): string | null {
     if (!value) return null;
     return value.slice(0, 16);
+  }
+
+  private toDateOnly(value: string | null): string | null {
+    if (!value) return null;
+    return value.slice(0, 10);
   }
 
   private toSqlDateTime(value: string | null): string | null {
