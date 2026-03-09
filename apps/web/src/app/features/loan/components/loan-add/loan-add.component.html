@@ -1,1 +1,58 @@
-<p>loan-add works!</p>
+<form class="form_container" [formGroup]="form" (ngSubmit)="onSubmit()">
+
+    <h2 class="form_title"> 
+        <span>Editar Registro</span> 
+    </h2>
+
+    <div class="form_section">
+        <!-- campo nuevo lector  -->
+            <div class="floating-group">
+                <select formControlName="idLector">
+                    <ng-container *ngFor="let student of students">
+                        <option [value]="student.idLector"> {{ student.nombre }} </option>
+                    </ng-container>
+                </select>
+                <label for="idLector">Lector</label>
+            </div>
+
+        <!-- campo nuevo lector  -->
+            <div class="floating-group">
+                <select formControlName="idLibro">
+                    <ng-container *ngFor="let book of books">
+                        <option [value]="book.idLibro"> {{ book.titulo }} </option>
+                    </ng-container>
+                </select>
+                <label for="idLibro">Libro</label>
+            </div>
+
+        <!-- campo fecha de prestamo -->
+            <div class="floating-group">
+                <input type="date" formControlName="fechaPrestamo"/>
+                <label for="fechaPrestamo">Fecha de Prestamo</label>
+            </div>
+
+        <!-- campo fecha de devolucion -->
+            <div class="floating-group">
+                <input type="date" formControlName="fechaDevolucion"/>
+                <label for="fechaDevolucion">Fecha de Devolucion</label>
+            </div>
+
+        <!-- campo fecha de devolucion -->
+            <div class="floating-group">
+                <input type="checkbox" formControlName="devuelto"/>
+                <label for="devuelto">Devuelto</label>
+            </div>
+
+    </div><!--end class="form_section" -->
+    
+    <!-- boton para guardar cambios -->
+    <button type="submit" 
+        class="sqr_rds mt-1" 
+        style="display: flex; margin: 0; padding: 0; background-color: transparent; border: 0px transparent;" >
+        <img    src="/assets/icons/save_disk.png" 
+                alt="" 
+                class="sqr_rds" 
+                style="width: 5rem; height: 5rem;"
+        >
+    </button>
+</form>

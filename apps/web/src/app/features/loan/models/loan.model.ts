@@ -30,7 +30,6 @@ export interface PrestamoUpdate {
   idLectorOriginal: number;
   idLibroOriginal: number;
   fechaPrestamoOriginal: string;
-
   idLectorNuevo: number;
   idLibroNuevo: number;
   fechaPrestamoNueva: string;

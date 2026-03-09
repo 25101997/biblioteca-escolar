@@ -5,19 +5,43 @@
     </h2>
 
     <div class="form_section">
-    <!-- campo nuevo lector  -->
-        <div class="floating-group">
-            <select formControlName="idLectorNuevo">
-                <ng-container *ngFor="let student of students">
-                    <option [value]="student.idLector"> {{ student.nombre }} </option>
-                </ng-container>
-            </select>
-            <label for="idLectorNuevo">Lector</label>
-        </div>
+        <!-- campo nuevo lector  -->
+            <div class="floating-group">
+                <select formControlName="idLectorNuevo">
+                    <ng-container *ngFor="let student of students">
+                        <option [value]="student.idLector"> {{ student.nombre }} </option>
+                    </ng-container>
+                </select>
+                <label for="idLectorNuevo">Lector</label>
+            </div>
 
+        <!-- campo nuevo lector  -->
+            <div class="floating-group">
+                <select formControlName="idLibroNuevo">
+                    <ng-container *ngFor="let book of books">
+                        <option [value]="book.idLibro"> {{ book.titulo }} </option>
+                    </ng-container>
+                </select>
+                <label for="idLibroNuevo">Libro</label>
+            </div>
 
+        <!-- campo fecha de prestamo -->
+            <div class="floating-group">
+                <input type="date" formControlName="fechaPrestamoNueva"/>
+                <label for="fechaPrestamoNueva">Fecha de Prestamo</label>
+            </div>
 
-  
+        <!-- campo fecha de devolucion -->
+            <div class="floating-group">
+                <input type="date" formControlName="fechaDevolucion"/>
+                <label for="fechaDevolucion">Fecha de Devolucion</label>
+            </div>
+
+        <!-- campo devuelto -->
+            <div class="floating-group">
+                <input type="checkbox" formControlName="devuelto"/>
+                <label for="devuelto">Devuelto</label>
+            </div>
 
     </div><!--end class="form_section" -->
     
