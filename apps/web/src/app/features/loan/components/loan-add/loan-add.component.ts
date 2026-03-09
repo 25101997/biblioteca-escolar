@@ -12,6 +12,7 @@ import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/fo
 // Models
 import { StudentRead } from 'src/app/features/student/models/student.model';
 import { BookRead } from 'src/app/features/book/models/book.model';
+import { PrestamoCreate } from '../../models/loan.model';
 
 @Component({
   selector: 'app-loan-add',
@@ -76,24 +77,23 @@ export class LoanAddComponent {
   saveForm(): void {
     const raw = this.form.getRawValue();
 
-    const payload = {
-      idLectorOriginal: Number(raw.idLectorOriginal),
-      idLibroOriginal: Number(raw.idLibroOriginal),
-      fechaPrestamoOriginal: raw.fechaPrestamoOriginal,
-      idLectorNuevo: Number(raw.idLectorNuevo),
-      idLibroNuevo: Number(raw.idLibroNuevo),
-      fechaPrestamoNueva: raw.fechaPrestamoNueva,
+    const payload: PrestamoCreate = {
+      idLector: Number(raw.idLector),
+      idLibro: Number(raw.idLibro),
+      fechaPrestamo: raw.fechaPrestamo,
       fechaDevolucion: raw.fechaDevolucion || null,
       devuelto: !!raw.devuelto
     };
 
-    this.loanService.update(payload).subscribe({
+    console.log(payload)
+
+    this.loanService.create(payload).subscribe({
       next: (response) => {
-        console.log('Préstamo actualizado:', response);
+        console.log('Préstamo creado:', response);
         this.goBack();
       },
       error: (error) => {
-        console.error('Error al actualizar préstamo:', error);
+        console.error('Error al crear préstamo:', error);
       }
     });
   }
