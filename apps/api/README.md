@@ -1,3 +1,4 @@
+cd ExamenBiblioteca.Api
     dotnet clean
     dotnet restore
     dotnet build

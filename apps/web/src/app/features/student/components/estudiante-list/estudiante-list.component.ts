@@ -12,7 +12,7 @@ export class EstudianteListComponent {
   constructor(private studentService: StudentService) {}
 
   ngOnInit(): void {
-    this.studentService.getAllStudents().subscribe({
+    this.studentService.get().subscribe({
       next: (data) => {
         this.students = data;
       },

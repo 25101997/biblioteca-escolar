@@ -26,6 +26,11 @@ git push -u origin main
 git checkout main
 git pull origin main
 git checkout -b dev
+
+
+
+git checkout dev
+git pull origin dev
 git add .
 git commit -m "Added new edits"
 git push origin dev
@@ -38,3 +43,5 @@ git push origin dev
 git checkout main
 git pull origin main
 git merge dev
+
+

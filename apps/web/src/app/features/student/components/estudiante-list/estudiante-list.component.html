@@ -1,9 +1,9 @@
 <div class="table__container">
     <div class="table__top">
-      <div><span class="table__title">Listado de Animales</span></div>
+      <div><span class="table__title">Listado de Estudiantes</span></div>
       <div class="searchbar"><!-- Inicio seccion buscar --></div>
       <div>
-        <button routerLink="/livestock/animal-add" class="btn btn__primary__outline">Agregar</button>
+        <button routerLink="/student/add" class="btn btn__primary__outline">Agregar</button>
       </div>
     </div>
 
@@ -18,41 +18,40 @@
           
           <th><!--inicio columna Sexo-->  
             <span class="center_x_y">
-              Sexo
+              CI
             </span>  
           </th>
 
           <th><!--Columna Peso-->
             <span class="center_x_y">
-              Peso
+              Nombre
             </span>  
           </th>
 
           <th><!--inicio columna Fecha de Nacimiento-->
             <span class="center_x_y">
-              Fecha de Nacimiento
+              Direccion
             </span>  
           </th>
 
 
           <th><!--inicio columna Edad-->
             <span class="center_x_y">
-              Edad
+              Carrera
             </span>  
           </th>
 
           <th><!-- columna Origen-->
             <span class="center_x_y">
-              Origen
+              Edad
             </span>  
           </th>
-          
-          <th>Acciones</th>
-
+          <th>
+            Acciones
+          </th>
         </tr>
       </thead>
       <tbody>
-
         <tr *ngFor="let student of students">
           <td>{{ student.idLector }}</td>
           <td>{{ student.ci }}</td>
@@ -61,9 +60,7 @@
           <td>{{ student.carrera }}</td>
           <td>{{ student.edad }}</td>
           <td>
-            <button [routerLink]="['/livestock/animal-update', student.idLector]" class="btn btn__primary__outline">Editar</button>
-            <samp></samp>
-            <button [routerLink]="['/livestock/edit', student.idLector]" class="btn btn__primary__outline">Detalles</button>
+            <button [routerLink]="['/student/edit/', student.idLector]" class="btn btn__primary__outline">Editar</button>
           </td>        
         </tr>
       </tbody>

@@ -19,4 +19,8 @@ root@dacc922f80db:/#
         4> GO
         3> QUIT
         
-root@dacc922f80db:/# 
+root@dacc922f80db:/# exit
+
+docker exec -i sqlserver-test /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'ClaveSegura123!' < ~/repos/biblioteca-escolar/database/init/procedimientos_almacenados.sql
+
+docker start sqlserver-test

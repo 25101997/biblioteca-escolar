@@ -1,4 +1,4 @@
-docker run -it --rm -v "$PWD":/app -u $(id -u):$(id -g) -w /app -p 4200:4200 livestock-fe-angular-app:latest sh
+docker run -it --rm -v "$PWD":/web -u $(id -u):$(id -g) -w /web -p 4200:4200 livestock-fe-angular-app:latest sh
 
 # solo la primera vez cuando fue descargado
 npm install
